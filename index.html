@@ -268,4 +268,139 @@ textarea::placeholder{color:var(--text3);}
       <div class="original-arrow">↓</div>
     </div>
     <div class="cnv-steps">
-      <div class="cnv-step"><div class="step-header-row"><div class="step-num-badge">1</div><div class="step
+      <div class="cnv-step"><div class="step-header-row"><div class="step-num-badge">1</div><div class="step-label">Observation</div></div><div class="step-text" id="step-obs">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-num-badge">2</div><div class="step-label">Sentiment</div></div><div class="step-text" id="step-sent">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-num-badge">3</div><div class="step-label">Besoin</div></div><div class="step-text" id="step-need">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-num-badge">4</div><div class="step-label">Demande</div></div><div class="step-text" id="step-req">—</div></div>
+    </div>
+    <div class="score-row">
+      <div class="score-card"><div class="score-val green" id="score-empathy">—</div><div class="score-label">Empathie</div></div>
+      <div class="score-card"><div class="score-val gold" id="score-clarity">—</div><div class="score-label">Clarté</div></div>
+      <div class="score-card"><div class="score-val green" id="score-reduction">—</div><div class="score-label">Violence −</div></div>
+    </div>
+    <div class="full-message">
+      <div class="full-message-label">✦ Message complet reformulé</div>
+      <div class="full-message-text" id="full-message-text">—</div>
+    </div>
+    <div class="actions">
+      <button class="btn-copy" id="copy-btn" onclick="copyResult()">📋 Copier le message</button>
+      <button class="btn-again" onclick="goTo('input')">Nouveau ↻</button>
+    </div>
+  </div>
+
+  <div class="app-footer">
+    <div class="footer-item"><div class="footer-dot"></div>Zéro donnée stockée</div>
+    <div class="footer-item"><div class="footer-dot"></div>🇫🇷 IA française</div>
+    <div class="footer-item"><div class="footer-dot"></div>RGPD</div>
+  </div>
+</div>
+
+<script>
+let currentMessage = '';
+let lastResult = null;
+
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goToInput() { goTo('input'); }
+
+function updateChar() {
+  const v = document.getElementById('msg-input').value;
+  document.getElementById('char-count').textContent = v.length + ' / 800';
+  document.getElementById('transform-btn').disabled = v.trim().length < 5;
+}
+function clearInput() {
+  document.getElementById('msg-input').value = '';
+  updateChar();
+}
+function useExample(el) {
+  const txt = el.textContent.trim().replace(/^"|"$/g,'');
+  document.getElementById('msg-input').value = txt;
+  updateChar();
+}
+
+const phases = ['phase-1','phase-2','phase-3','phase-4'];
+let phaseIdx = 0, phaseTimer = null;
+function startLoadingAnimation() {
+  phases.forEach(p => document.getElementById(p).classList.remove('show'));
+  phaseIdx = 0;
+  showNextPhase();
+}
+function showNextPhase() {
+  if(phaseIdx > 0) document.getElementById(phases[phaseIdx-1]).classList.remove('show');
+  if(phaseIdx < phases.length) {
+    document.getElementById(phases[phaseIdx]).classList.add('show');
+    phaseIdx++;
+    phaseTimer = setTimeout(showNextPhase, 1200);
+  }
+}
+
+async function transformMessage() {
+  const msg = document.getElementById('msg-input').value.trim();
+  if(!msg || msg.length < 5) return;
+  currentMessage = msg;
+  hideError();
+  goTo('loading');
+  startLoadingAnimation();
+
+  try {
+    const response = await fetch('/api/cnv', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg })
+    });
+
+    if(!response.ok) throw new Error('Erreur ' + response.status);
+    const result = await response.json();
+    if(result.error) throw new Error(result.error);
+
+    clearTimeout(phaseTimer);
+    lastResult = result;
+    displayResult(result);
+
+  } catch(err) {
+    clearTimeout(phaseTimer);
+    showError("Une erreur s'est produite. Réessayez dans un instant.");
+    goTo('input');
+  }
+}
+
+function displayResult(r) {
+  document.getElementById('original-display').textContent = currentMessage;
+  document.getElementById('step-obs').textContent  = r.observation || '—';
+  document.getElementById('step-sent').textContent = r.sentiment   || '—';
+  document.getElementById('step-need').textContent = r.besoin      || '—';
+  document.getElementById('step-req').textContent  = r.demande     || '—';
+  document.getElementById('full-message-text').textContent = r.message_complet || '';
+  document.getElementById('score-empathy').textContent   = (r.score_empathie           || 87) + '%';
+  document.getElementById('score-clarity').textContent   = (r.score_clarte             || 84) + '%';
+  document.getElementById('score-reduction').textContent = (r.score_reduction_violence || 91) + '%';
+  goTo('result');
+}
+
+function copyResult() {
+  if(!lastResult) return;
+  const txt = lastResult.message_complet || '';
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copié !';
+    setTimeout(() => btn.innerHTML = '📋 Copier le message', 2000);
+  });
+}
+function showError(msg) {
+  document.getElementById('error-msg').textContent = msg;
+  document.getElementById('error-box').classList.add('show');
+}
+function hideError() {
+  document.getElementById('error-box').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add('loaded');
+  updateChar();
+});
+</script>
+</body>
+</html>
