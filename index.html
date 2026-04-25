@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kairos — Reformulateur CNV</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:#08090b; --deep:#0d0f13; --surface:#131720; --lifted:#1a2030;
+  --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.12);
+  --gold:#c49a2c; --gold2:#e8c060; --gold-a:rgba(196,154,44,0.1);
+  --sage:#5a9e74; --sage-a:rgba(90,158,116,0.1);
+  --sky:#4a8ec2; --sky-a:rgba(74,142,194,0.1);
+  --rose:#b85a5a; --rose-a:rgba(184,90,90,0.1);
+  --violet:#7a5ab8; --violet-a:rgba(122,90,184,0.1);
+  --text:#ede8e0; --text2:#9a9488; --text3:#4a4840; --r:16px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;-webkit-text-size-adjust:100%;}
+body{font-family:'Jost',sans-serif;background:var(--void);color:var(--text);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+.atm{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.atm-orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0;transition:opacity 2s ease;}
+.atm-orb.v{background:radial-gradient(circle,rgba(196,154,44,0.12),transparent 70%);width:500px;height:500px;top:-150px;right:-100px;}
+.atm-orb.b{background:radial-gradient(circle,rgba(90,158,116,0.06),transparent 70%);width:400px;height:400px;bottom:-100px;left:-100px;}
+body.loaded .atm-orb{opacity:1;}
+.atm::after{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");opacity:0.6;}
+
+.app{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;}
+
+header{padding:24px 28px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(8,9,11,0.6);backdrop-filter:blur(20px);position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-symbol{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Cormorant',serif;font-size:16px;color:var(--gold);position:relative;}
+.logo-symbol::before{content:'';position:absolute;inset:-5px;border:1px solid rgba(196,154,44,0.15);border-radius:50%;animation:spin 20s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.logo-text{font-family:'Cormorant',serif;font-size:20px;font-weight:400;letter-spacing:0.12em;color:var(--gold);}
+.logo-tagline{font-size:11px;color:var(--text3);letter-spacing:0.15em;text-transform:uppercase;}
+.header-badge{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--sage);border:1px solid rgba(90,158,116,0.25);padding:4px 12px;border-radius:20px;background:var(--sage-a);display:flex;align-items:center;gap:6px;}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:var(--sage);animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.screen{display:none;flex:1;padding:0 20px 40px;max-width:600px;width:100%;margin:0 auto;}
+.screen.active{display:flex;flex-direction:column;animation:screenIn 0.5s cubic-bezier(0.4,0,0.2,1) both;}
+@keyframes screenIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* HOME */
+#home{padding-top:40px;align-items:center;text-align:center;}
+.home-kicker{font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);margin-bottom:24px;display:flex;align-items:center;gap:12px;justify-content:center;}
+.home-kicker::before,.home-kicker::after{content:'';width:30px;height:1px;background:var(--gold);opacity:0.4;}
+.home-title{font-family:'Cormorant',serif;font-size:clamp(40px,10vw,64px);font-weight:300;line-height:1.1;margin-bottom:16px;letter-spacing:0.02em;}
+.home-title em{font-style:italic;color:var(--gold);}
+.home-sub{font-size:15px;color:var(--text2);font-weight:300;line-height:1.8;max-width:380px;margin:0 auto 48px;}
+
+.modules{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-bottom:32px;}
+.mod{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 16px;cursor:pointer;transition:all 0.3s ease;text-align:left;position:relative;overflow:hidden;}
+.mod::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.3s;}
+.mod:hover{transform:translateY(-3px);}
+.mod:hover::after{opacity:1;}
+.mod.active-mod{border-color:rgba(196,154,44,0.3);}
+.mod.active-mod::after{background:radial-gradient(circle at top left,var(--gold-a),transparent 70%);}
+.mod.active-mod:hover{border-color:rgba(196,154,44,0.5);box-shadow:0 16px 48px rgba(196,154,44,0.08);}
+.mod.locked{opacity:0.4;cursor:not-allowed;}
+.mod.locked:hover{transform:none;}
+.mod-icon{font-size:24px;margin-bottom:10px;}
+.mod-name{font-size:13px;font-weight:500;margin-bottom:3px;}
+.mod-desc{font-size:11px;color:var(--text3);line-height:1.5;}
+.mod-tag{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:2px 8px;border-radius:10px;border:1px solid;}
+.mod-tag.gold{color:var(--gold);border-color:var(--gold);}
+.mod-tag.gray{color:var(--text3);border-color:var(--text3);}
+
+.home-cta{width:100%;padding:18px;background:linear-gradient(135deg,var(--gold),#a07020);color:var(--void);border:none;border-radius:50px;font-family:'Jost',sans-serif;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:0.06em;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:10px;}
+.home-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(196,154,44,0.3);}
+.privacy-strip{display:flex;align-items:center;gap:6px;justify-content:center;font-size:11px;color:var(--text3);margin-top:16px;}
+.privacy-dot{width:5px;height:5px;border-radius:50%;background:var(--sage);}
+
+/* INPUT */
+#input{padding-top:32px;}
+.screen-back{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;margin-bottom:28px;transition:color 0.2s;background:none;border:none;font-family:'Jost',sans-serif;}
+.screen-back:hover{color:var(--text);}
+.input-hero{margin-bottom:28px;}
+.input-kicker{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.input-title{font-family:'Cormorant',serif;font-size:30px;font-weight:300;line-height:1.2;}
+.input-title em{font-style:italic;color:var(--gold);}
+.input-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;transition:border-color 0.3s;}
+.input-card:focus-within{border-color:rgba(196,154,44,0.3);}
+.input-label{padding:14px 18px 0;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text3);}
+textarea{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Jost',sans-serif;font-size:15px;line-height:1.7;font-weight:300;padding:10px 18px 16px;resize:none;min-height:140px;}
+textarea::placeholder{color:var(--text3);}
+.input-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border);}
+.char-count{font-size:11px;color:var(--text3);}
+.clear-btn{font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;transition:color 0.2s;}
+.clear-btn:hover{color:var(--text2);}
+.examples-label{font-size:11px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:10px;}
+.examples{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.example{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:13px;color:var(--text2);line-height:1.5;cursor:pointer;transition:all 0.2s;font-style:italic;}
+.example:hover{border-color:rgba(196,154,44,0.2);color:var(--text);}
+.transform-btn{width:100%;padding:17px;background:linear-gradient(135deg,var(--gold),#a07020);color:var(--void);border:none;border-radius:50px;font-family:'Jost',sans-serif;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:0.05em;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:10px;}
+.transform-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 40px rgba(196,154,44,0.25);}
+.transform-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+
+/* LOADING */
+#loading{align-items:center;justify-content:center;text-align:center;padding-top:80px;}
+.loading-ring{width:80px;height:80px;border-radius:50%;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto 40px;}
+.loading-ring::before{content:'';position:absolute;inset:-1px;border-radius:50%;border:1.5px solid transparent;border-top-color:var(--gold);animation:rotate 1.2s linear infinite;}
+.loading-ring::after{content:'';position:absolute;inset:6px;border-radius:50%;border:1px solid transparent;border-top-color:rgba(196,154,44,0.3);animation:rotate 2s linear infinite reverse;}
+@keyframes rotate{to{transform:rotate(360deg);}}
+.loading-symbol{font-family:'Cormorant',serif;font-size:28px;color:var(--gold);font-weight:300;}
+.loading-phases{margin-bottom:40px;}
+.loading-phase{font-size:14px;color:var(--text2);font-weight:300;opacity:0;transition:opacity 0.5s;display:none;}
+.loading-phase.show{display:block;opacity:1;}
+.loading-dots{display:flex;gap:8px;justify-content:center;margin-top:16px;}
+.loading-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:0.3;animation:dotPulse 1.5s ease infinite;}
+.loading-dot:nth-child(2){animation-delay:0.2s;}
+.loading-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes dotPulse{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+/* RESULT */
+#result{padding-top:28px;}
+.result-header{margin-bottom:24px;}
+.result-kicker{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--sage);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.result-check{width:16px;height:16px;border-radius:50%;background:var(--sage);display:flex;align-items:center;justify-content:center;font-size:9px;color:white;}
+.result-title{font-family:'Cormorant',serif;font-size:28px;font-weight:300;line-height:1.2;margin-bottom:6px;}
+.result-title em{font-style:italic;color:var(--gold);}
+.original-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:20px;position:relative;}
+.original-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+.original-text{font-size:14px;color:var(--text2);line-height:1.6;font-style:italic;}
+.original-arrow{position:absolute;bottom:-16px;left:50%;transform:translateX(-50%);width:32px;height:32px;border-radius:50%;background:var(--deep);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--gold);z-index:1;}
+.cnv-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.cnv-step{border-radius:var(--r);padding:18px 20px;border:1px solid;animation:stepIn 0.5s ease both;}
+@keyframes stepIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+.cnv-step:nth-child(1){animation-delay:0.1s;background:var(--gold-a);border-color:rgba(196,154,44,0.2);}
+.cnv-step:nth-child(2){animation-delay:0.2s;background:var(--sage-a);border-color:rgba(90,158,116,0.2);}
+.cnv-step:nth-child(3){animation-delay:0.3s;background:var(--sky-a);border-color:rgba(74,142,194,0.2);}
+.cnv-step:nth-child(4){animation-delay:0.4s;background:var(--violet-a);border-color:rgba(122,90,184,0.2);}
+.step-header-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.step-num-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.cnv-step:nth-child(1) .step-num-badge{background:rgba(196,154,44,0.2);color:var(--gold);}
+.cnv-step:nth-child(2) .step-num-badge{background:rgba(90,158,116,0.2);color:var(--sage);}
+.cnv-step:nth-child(3) .step-num-badge{background:rgba(74,142,194,0.2);color:var(--sky);}
+.cnv-step:nth-child(4) .step-num-badge{background:rgba(122,90,184,0.2);color:var(--violet);}
+.step-label{font-size:10px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;}
+.cnv-step:nth-child(1) .step-label{color:var(--gold);}
+.cnv-step:nth-child(2) .step-label{color:var(--sage);}
+.cnv-step:nth-child(3) .step-label{color:var(--sky);}
+.cnv-step:nth-child(4) .step-label{color:var(--violet);}
+.step-text{font-size:15px;color:var(--text);line-height:1.7;font-weight:300;}
+.score-row{display:flex;gap:10px;margin-bottom:20px;}
+.score-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;animation:stepIn 0.5s ease 0.5s both;}
+.score-val{font-family:'Cormorant',serif;font-size:28px;font-weight:400;margin-bottom:2px;}
+.score-val.green{color:var(--sage);}
+.score-val.gold{color:var(--gold);}
+.score-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;}
+.full-message{background:var(--surface);border:1px solid rgba(196,154,44,0.2);border-radius:var(--r);padding:20px;margin-bottom:20px;animation:stepIn 0.5s ease 0.6s both;}
+.full-message-label{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.full-message-text{font-size:17px;color:var(--text);line-height:1.8;font-weight:300;font-family:'Cormorant',serif;}
+.actions{display:flex;gap:10px;animation:stepIn 0.5s ease 0.7s both;}
+.btn-copy{flex:1;padding:15px;background:linear-gradient(135deg,var(--gold),#a07020);color:var(--void);border:none;border-radius:50px;font-family:'Jost',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-copy:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(196,154,44,0.25);}
+.btn-again{padding:15px 20px;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:50px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.btn-again:hover{border-color:var(--border2);color:var(--text);}
+.error-box{background:var(--rose-a);border:1px solid rgba(184,90,90,0.3);border-radius:var(--r);padding:16px 20px;font-size:14px;color:var(--text2);line-height:1.6;display:none;margin-bottom:16px;}
+.error-box.show{display:block;}
+
+.app-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:20px;position:relative;z-index:1;}
+.footer-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);letter-spacing:0.1em;}
+.footer-dot{width:4px;height:4px;border-radius:50%;background:var(--sage);}
+</style>
+</head>
+<body>
+<div class="atm"><div class="atm-orb v"></div><div class="atm-orb b"></div></div>
+<div class="app">
+
+  <header>
+    <div class="logo">
+      <div class="logo-symbol">K</div>
+      <div>
+        <div class="logo-text">Kairos</div>
+        <div class="logo-tagline">Intelligence émotionnelle</div>
+      </div>
+    </div>
+    <div class="header-badge"><div class="badge-dot"></div>IA active</div>
+  </header>
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="home-kicker">La parole juste</div>
+    <h1 class="home-title">Transformez vos<br>mots en <em>ponts</em></h1>
+    <p class="home-sub">L'IA qui reformule vos messages tendus en communication non-violente. Dites ce que vous ressentez — avec élégance et conviction.</p>
+    <div class="modules">
+      <div class="mod active-mod" onclick="goToInput()">
+        <div class="mod-icon">🕊️</div>
+        <div class="mod-name">Reformuler</div>
+        <div class="mod-desc">Transformez un message en CNV</div>
+        <div class="mod-tag gold">Disponible</div>
+      </div>
+      <div class="mod locked">
+        <div class="mod-icon">🎙️</div>
+        <div class="mod-name">Vide ton sac</div>
+        <div class="mod-desc">Exprimez vos émotions</div>
+        <div class="mod-tag gray">Bientôt</div>
+      </div>
+      <div class="mod locked">
+        <div class="mod-icon">🥊</div>
+        <div class="mod-name">S'entraîner</div>
+        <div class="mod-desc">Simulations de conflits</div>
+        <div class="mod-tag gray">Bientôt</div>
+      </div>
+      <div class="mod locked">
+        <div class="mod-icon">⚖️</div>
+        <div class="mod-name">Mes droits</div>
+        <div class="mod-desc">Assistant juridique</div>
+        <div class="mod-tag gray">Bientôt</div>
+      </div>
+    </div>
+    <button class="home-cta" onclick="goToInput()">✦ Reformuler un message maintenant</button>
+    <div class="privacy-strip"><div class="privacy-dot"></div><span>Zéro donnée conservée · Serveurs 🇫🇷 · RGPD</span></div>
+  </div>
+
+  <!-- INPUT -->
+  <div id="input" class="screen">
+    <button class="screen-back" onclick="goTo('home')">← Retour</button>
+    <div class="input-hero">
+      <div class="input-kicker">Reformulateur CNV</div>
+      <h2 class="input-title">Quel message<br>voulez-vous <em>transformer</em> ?</h2>
+    </div>
+    <div class="input-card">
+      <div class="input-label">Votre message original</div>
+      <textarea id="msg-input" placeholder="Écrivez ou collez votre message ici...&#10;Ex: T'as encore oublié ! Tu te fous de moi ?" oninput="updateChar()" maxlength="800"></textarea>
+      <div class="input-footer">
+        <span class="char-count" id="char-count">0 / 800</span>
+        <button class="clear-btn" onclick="clearInput()">Effacer</button>
+      </div>
+    </div>
+    <div class="error-box" id="error-box">⚠️ <span id="error-msg"></span></div>
+    <div class="examples-label">Ou essayez un exemple</div>
+    <div class="examples">
+      <div class="example" onclick="useExample(this)">"T'as encore oublié ! Tu t'en fous complètement de moi, comme d'habitude."</div>
+      <div class="example" onclick="useExample(this)">"C'est inadmissible ! Votre service est nul et vous ne faites rien pour résoudre le problème."</div>
+      <div class="example" onclick="useExample(this)">"Tu ne m'écoutes jamais ! À chaque fois c'est pareil, tu fais comme si je n'existais pas."</div>
+    </div>
+    <button class="transform-btn" id="transform-btn" onclick="transformMessage()"><span>✦</span> Transformer en CNV</button>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" class="screen">
+    <div class="loading-ring"><div class="loading-symbol">K</div></div>
+    <div class="loading-phases">
+      <div class="loading-phase" id="phase-1">Analyse du message...</div>
+      <div class="loading-phase" id="phase-2">Détection des émotions...</div>
+      <div class="loading-phase" id="phase-3">Reformulation CNV en cours...</div>
+      <div class="loading-phase" id="phase-4">Finalisation...</div>
+    </div>
+    <div class="loading-dots">
+      <div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result" class="screen">
+    <div class="result-header">
+      <div class="result-kicker"><div class="result-check">✓</div>Message transformé</div>
+      <h2 class="result-title">Votre message<br>en <em>communication non-violente</em></h2>
+    </div>
+    <div class="original-box">
+      <div class="original-label">Message original</div>
+      <div class="original-text" id="original-display"></div>
+      <div class="original-arrow">↓</div>
+    </div>
+    <div class="cnv-steps">
+      <div class="cnv-step"><div class="step-header-row"><div class="step-num-badge">1</div><div class="step
