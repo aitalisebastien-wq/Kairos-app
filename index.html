@@ -658,103 +658,34 @@ function startMic(SR) {
   }
 }
 
-// Buffer pour accumuler le texte final (évite les pertes et répétitions)
-let micFinalBuffer = '';
-let micExistingText = '';
-let micCompletedSentences = '';
-
 function actuallyStartMic(SR) {
   try {
     micRecognition = new SR();
     micRecognition.lang = 'fr-FR';
     micRecognition.continuous = true;
-    micRecognition.interimResults = false;
-    micRecognition.maxAlternatives = 1;
-
-    // Sauvegarde le texte déjà présent
-    micExistingText = document.getElementById('msg-input').value.trim();
-    if(micExistingText.length > 0 && !micExistingText.endsWith(' ')) {
-      micExistingText += ' ';
-    }
-    // micFinalBuffer contient la phrase en cours (sera REMPLACÉE, pas additionnée)
-    micFinalBuffer = '';
-    // micCompletedSentences contient les phrases déjà terminées (avec ponctuation)
-    micCompletedSentences = '';
-
+    micRecognition.interimResults = true;
     micRecognition.onstart = () => {
       micActive = true;
       const b = document.getElementById('mic-btn');
       b.textContent = '⏹ Stop';
       b.classList.add('recording');
     };
-
     micRecognition.onresult = (ev) => {
-      // Sur Android : chaque résultat contient TOUTE la phrase en cours
-      // On REMPLACE le buffer au lieu de l'additionner
-      const lastResult = ev.results[ev.results.length - 1];
-      if(lastResult && lastResult.isFinal) {
-        let cleaned = lastResult[0].transcript.trim();
-        if(cleaned.length > 0) {
-          // Capitalise si nécessaire
-          const fullPrefix = micExistingText + micCompletedSentences;
-          if(fullPrefix.trim() === '') {
-            cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-          } else {
-            const lastChar = fullPrefix.trim().slice(-1);
-            if(['.','!','?'].includes(lastChar)) {
-              cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-            }
-          }
-          // REMPLACE (ne pas additionner) la phrase en cours
-          micFinalBuffer = cleaned;
-          // Affiche immédiatement
-          const fullText = (micExistingText + micCompletedSentences + micFinalBuffer).replace(/\s+/g, ' ').trim();
-          document.getElementById('msg-input').value = fullText;
-          updateChar();
-        }
+      let finalText = '', interimText = '';
+      for(let i = 0; i < ev.results.length; i++) {
+        if(ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
+        else interimText += ev.results[i][0].transcript;
       }
+      document.getElementById('msg-input').value = (finalText + interimText).trim();
+      updateChar();
     };
-
     micRecognition.onerror = (e) => {
-      console.log('Mic error:', e.error);
-      if(e.error === 'no-speech') return;
-      if(e.error === 'not-allowed') {
-        alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
-        stopMic();
-        return;
-      }
+      stopMic();
+      if(e.error === 'not-allowed') alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
     };
-
-    micRecognition.onend = () => {
-      if(micActive) {
-        // Quand le micro s'arrête (pause de l'utilisateur), on archive la phrase actuelle
-        // dans micCompletedSentences puis on relance pour permettre la phrase suivante
-        if(micFinalBuffer.trim().length > 0) {
-          micCompletedSentences += micFinalBuffer + '. ';
-          micFinalBuffer = '';
-        }
-        try {
-          setTimeout(() => {
-            if(micActive) {
-              try { micRecognition.start(); }
-              catch(err) { stopMic(); }
-            }
-          }, 200);
-        } catch(err) {
-          stopMic();
-        }
-      } else {
-        const b = document.getElementById('mic-btn');
-        if(b) {
-          b.textContent = '🎤 Dicter';
-          b.classList.remove('recording');
-        }
-      }
-    };
-
+    micRecognition.onend = () => stopMic();
     micRecognition.start();
   } catch(err) {
-    console.error('Mic start error:', err);
     alert('Erreur de démarrage du micro. Réessayez.');
   }
 }
@@ -765,9 +696,6 @@ function stopMic() {
     try { micRecognition.stop(); } catch(e){}
     micRecognition = null;
   }
-  micFinalBuffer = '';
-  micExistingText = '';
-  micCompletedSentences = '';
   const b = document.getElementById('mic-btn');
   if(b) {
     b.textContent = '🎤 Dicter';
