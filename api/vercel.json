@@ -1,23 +1,13 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "api/cnv.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
+    { "src": "api/cnv.js",    "use": "@vercel/node" },
+    { "src": "api/quotes.js", "use": "@vercel/node" },
+    { "src": "index.html",    "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/api/cnv",
-      "dest": "/api/cnv.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/api/cnv",    "dest": "/api/cnv.js" },
+    { "src": "/api/quotes", "dest": "/api/quotes.js" },
+    { "src": "/(.*)",       "dest": "/index.html" }
   ]
 }
