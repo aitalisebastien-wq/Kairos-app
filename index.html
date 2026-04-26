@@ -679,9 +679,24 @@ function actuallyStartMic(SR) {
     micFinalBuffer = '';
     micCompletedSentences = '';
 
-    // Auto-stop : compteur de redémarrages SANS aucune parole
-    let silentRestarts = 0;
-    const MAX_SILENT_RESTARTS = 2;
+    // Timer d'arrêt automatique après silence prolongé suivant la parole
+    let autoStopTimer = null;
+    const SILENCE_AFTER_SPEAKING_MS = 3000; // 3 secondes après la dernière parole
+    let hasSpoken = false; // l'utilisateur a-t-il déjà parlé une fois ?
+
+    function scheduleAutoStop() {
+      if(autoStopTimer) clearTimeout(autoStopTimer);
+      autoStopTimer = setTimeout(() => {
+        if(micActive && hasSpoken) {
+          // Archive la dernière phrase
+          if(micFinalBuffer.trim().length > 0) {
+            micCompletedSentences += micFinalBuffer + '. ';
+            micFinalBuffer = '';
+          }
+          stopMic();
+        }
+      }, SILENCE_AFTER_SPEAKING_MS);
+    }
 
     micRecognition.onstart = () => {
       micActive = true;
@@ -691,11 +706,9 @@ function actuallyStartMic(SR) {
     };
 
     micRecognition.onresult = (ev) => {
-      // L'utilisateur parle → reset compteur silence
-      silentRestarts = 0;
+      // L'utilisateur parle → marque qu'il a parlé + (re)démarre le timer
+      hasSpoken = true;
 
-      // Sur Android : chaque résultat contient TOUTE la phrase en cours
-      // On REMPLACE le buffer (pas d'addition)
       const lastResult = ev.results[ev.results.length - 1];
       if(lastResult && lastResult.isFinal) {
         let cleaned = lastResult[0].transcript.trim();
@@ -709,23 +722,21 @@ function actuallyStartMic(SR) {
               cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
             }
           }
-          // REMPLACE la phrase en cours
           micFinalBuffer = cleaned;
           const fullText = (micExistingText + micCompletedSentences + micFinalBuffer).replace(/\s+/g, ' ').trim();
           document.getElementById('msg-input').value = fullText;
           updateChar();
         }
+        // À chaque phrase finalisée, on démarre le timer de 3s de silence
+        scheduleAutoStop();
       }
     };
 
     micRecognition.onerror = (e) => {
       console.log('Mic error:', e.error);
-      if(e.error === 'no-speech') {
-        // Silence prolongé → on incrémente le compteur
-        silentRestarts++;
-        return;
-      }
+      if(e.error === 'no-speech') return;
       if(e.error === 'not-allowed') {
+        if(autoStopTimer) clearTimeout(autoStopTimer);
         alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
         stopMic();
         return;
@@ -734,6 +745,7 @@ function actuallyStartMic(SR) {
 
     micRecognition.onend = () => {
       if(!micActive) {
+        if(autoStopTimer) clearTimeout(autoStopTimer);
         const b = document.getElementById('mic-btn');
         if(b) {
           b.textContent = '🎤 Dicter';
@@ -742,20 +754,7 @@ function actuallyStartMic(SR) {
         return;
       }
 
-      // Si trop de silences consécutifs → on coupe automatiquement
-      if(silentRestarts >= MAX_SILENT_RESTARTS) {
-        // Avant d'arrêter, on archive la dernière phrase
-        if(micFinalBuffer.trim().length > 0) {
-          micCompletedSentences += micFinalBuffer + '. ';
-          micFinalBuffer = '';
-        }
-        stopMic();
-        return;
-      }
-
-      // Sinon on relance pour permettre la suite
-      // IMPORTANT : on n'archive PAS micFinalBuffer ici car Android va le retransmettre
-      // au prochain résultat. Ça évite la duplication.
+      // Relance pour permettre de continuer (le timer auto-stop tourne en parallèle)
       try {
         setTimeout(() => {
           if(micActive) {
