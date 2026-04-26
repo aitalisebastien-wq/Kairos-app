@@ -18,7 +18,8 @@
 html{-webkit-text-size-adjust:100%;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
-.halo{position:fixed;top:-120px;left:50%;transform:translateX(-50%);width:340px;height:340px;border-radius:50%;filter:blur(60px);z-index:0;pointer-events:none;transition:background 1s ease;opacity:0.8;background:rgba(80,180,120,0.25);}
+/* GLOBAL HALO - background atmosphere */
+.halo-bg{position:fixed;top:-100px;left:50%;transform:translateX(-50%);width:380px;height:380px;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;transition:background 1.5s ease;opacity:0.7;background:rgba(80,180,120,0.3);}
 
 .app{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
 
@@ -36,10 +37,15 @@ header{padding:18px 20px 14px;display:flex;align-items:center;justify-content:sp
 @keyframes sIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 
 #home{padding-top:24px;align-items:center;text-align:center;}
-.eb-card{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:20px;box-shadow:var(--shadow);}
+
+/* HOME EMOTIONAL CARD - now with prominent halo visualization */
+.eb-card{position:relative;width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:20px;box-shadow:var(--shadow);overflow:hidden;}
+.eb-aura{position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;filter:blur(35px);opacity:0.5;transition:background 1s ease;background:rgba(80,180,120,0.4);pointer-events:none;}
+.eb-content{position:relative;z-index:2;}
 .eb-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;}
-.eb-state{font-family:'Playfair Display',serif;font-size:20px;color:var(--teal2);margin-bottom:12px;}
+.eb-state{font-family:'Playfair Display',serif;font-size:20px;color:var(--teal2);margin-bottom:4px;transition:color 0.5s;}
 .eb-state em{font-style:italic;}
+.eb-message{font-size:12px;color:var(--muted);margin-bottom:14px;font-style:italic;line-height:1.5;}
 .eb-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
 .eb-action{padding:6px 12px;border-radius:20px;background:var(--teal-light);border:1px solid var(--border);font-size:11px;color:var(--teal2);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:'DM Sans',sans-serif;}
 
@@ -168,7 +174,7 @@ textarea::placeholder{color:#b0c8c0;}
 .modal-handle{width:40px;height:4px;border-radius:2px;background:var(--border2);margin:0 auto 18px;}
 .modal-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--teal2);margin-bottom:4px;text-align:center;}
 .modal-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:20px;}
-.modal-intro{font-size:13px;color:var(--ink2);text-align:center;margin-bottom:18px;line-height:1.6;font-style:italic;}
+.modal-intro{font-size:13px;color:var(--ink2);text-align:center;margin-bottom:18px;line-height:1.6;font-style:italic;padding:12px;background:var(--teal-light);border-radius:var(--r-sm);}
 
 .emotion-selector{display:flex;gap:8px;margin-bottom:20px;}
 .emotion-btn{flex:1;padding:12px 6px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;color:var(--ink2);transition:all 0.2s;}
@@ -185,15 +191,18 @@ textarea::placeholder{color:#b0c8c0;}
 .wellness-card{background:var(--teal-light);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;}
 .wc-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
 .wc-counter{margin-left:auto;font-size:10px;color:var(--muted);background:var(--white);padding:2px 8px;border-radius:10px;}
-.wc-content{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink2);line-height:1.7;font-style:italic;margin-bottom:10px;min-height:80px;}
+.wc-content{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink2);line-height:1.7;font-style:italic;margin-bottom:6px;min-height:60px;}
+.wc-author{font-size:12px;color:var(--teal);font-weight:500;margin-bottom:10px;text-align:right;}
 .wc-action{font-size:12px;color:var(--teal2);font-weight:500;margin-bottom:14px;padding:10px;background:var(--white);border-radius:var(--r-sm);border-left:3px solid var(--teal);}
+.wc-loading{text-align:center;color:var(--muted);font-size:13px;font-style:italic;padding:20px;}
 
 .next-btn{width:100%;padding:12px;background:var(--white);border:1.5px solid var(--teal);color:var(--teal2);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.daily-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--gold);background:rgba(196,154,44,0.1);padding:2px 8px;border-radius:10px;margin-left:6px;}
 </style>
 </head>
 <body>
 
-<div class="halo" id="halo"></div>
+<div class="halo-bg" id="halo-bg"></div>
 
 <div class="app">
   <header>
@@ -212,12 +221,16 @@ textarea::placeholder{color:#b0c8c0;}
 
   <div id="home" class="screen active">
     <div class="eb-card">
-      <div class="eb-label">Votre état émotionnel</div>
-      <div class="eb-state" id="home-state">🌿 <em>Calme & centré</em></div>
-      <div class="eb-actions">
-        <button class="eb-action" type="button" onclick="openWellness('breathing')">🧘 Respiration</button>
-        <button class="eb-action" type="button" onclick="openWellness('quote')">💭 Sagesse</button>
-        <button class="eb-action" type="button" onclick="openWellness('move')">🏃 Bouger</button>
+      <div class="eb-aura" id="eb-aura"></div>
+      <div class="eb-content">
+        <div class="eb-label">Votre état émotionnel</div>
+        <div class="eb-state" id="home-state">🌿 <em>Calme & centré</em></div>
+        <div class="eb-message" id="home-message">Vous êtes serein. Voici de quoi cultiver et amplifier cet état.</div>
+        <div class="eb-actions">
+          <button class="eb-action" type="button" onclick="openWellness('breathing')">🧘 Respiration</button>
+          <button class="eb-action" type="button" onclick="openWellness('quote')">💭 Sagesse</button>
+          <button class="eb-action" type="button" onclick="openWellness('move')">🏃 Bouger</button>
+        </div>
       </div>
     </div>
 
@@ -367,6 +380,7 @@ textarea::placeholder{color:#b0c8c0;}
         <span class="wc-counter" id="wc-counter">1 / 5</span>
       </div>
       <div class="wc-content" id="wc-content"></div>
+      <div class="wc-author" id="wc-author" style="display:none;"></div>
       <div class="wc-action" id="wc-action"></div>
       <button class="next-btn" type="button" onclick="nextProposal()">↻ Autre proposition</button>
     </div>
@@ -378,23 +392,18 @@ textarea::placeholder{color:#b0c8c0;}
 let currentMessage='', lastResult=null, currentTone='courant';
 let currentEmotion='calm', currentWellTab='breathing', proposalIdx=0;
 let micRecognition=null, micActive=false;
+let dailyQuotes = { stress: null, neutral: null, calm: null };
+let isLoadingQuotes = false;
 
 // ─── HALO PROPERTIES ─────────────
 const haloProps = {
-  stress:  { halo:'rgba(220,80,80,0.22)',  dot:'#e05a5a', label:'Stressé', state:'😤 <em>Tension détectée</em>' },
-  neutral: { halo:'rgba(220,180,60,0.25)', dot:'#d4a020', label:'Neutre',  state:'😐 <em>État neutre</em>' },
-  calm:    { halo:'rgba(80,180,120,0.25)', dot:'#50b478', label:'Calme',   state:'🌿 <em>Calme & centré</em>' }
+  stress:  { halo:'rgba(220,80,80,0.35)', aura:'rgba(220,80,80,0.5)',  dot:'#e05a5a', label:'Stressé', state:'😤 <em>Tension détectée</em>',  msg:'Vous êtes sous tension. Voici des outils pour retrouver votre calme.' },
+  neutral: { halo:'rgba(220,180,60,0.35)', aura:'rgba(220,180,60,0.5)', dot:'#d4a020', label:'Neutre',  state:'😐 <em>État neutre</em>',         msg:'État neutre. Voici des pratiques pour cultiver présence et bienveillance.' },
+  calm:    { halo:'rgba(80,180,120,0.35)', aura:'rgba(80,180,120,0.5)', dot:'#50b478', label:'Calme',   state:'🌿 <em>Calme & centré</em>',     msg:'Vous êtes serein. Voici de quoi cultiver et amplifier cet état.' }
 };
 
-// ─── INTROS ──────────────────────
-const intros = {
-  stress: 'Vous êtes sous tension. Voici des outils pour retrouver votre calme et votre clarté.',
-  neutral: 'État neutre. Voici des pratiques pour cultiver présence et bienveillance.',
-  calm: 'Vous êtes serein. Voici de quoi cultiver et amplifier cet état.'
-};
-
-// ─── BIBLIOTHÈQUE BIEN-ÊTRE ──────
-const wellnessLibrary = {
+// ─── BIBLIOTHÈQUE STATIQUE (respiration + mouvement) ─────────
+const wellnessLib = {
   stress: {
     breathing: [
       { content:'Respiration 4-4-6 : inspirez sur 4 temps... retenez votre souffle 4 temps... expirez lentement sur 6 temps. Répétez 5 fois.', action:'Active le système parasympathique en moins de 2 minutes.' },
@@ -402,14 +411,6 @@ const wellnessLibrary = {
       { content:'Soupir physiologique : double inspiration courte par le nez, puis longue expiration par la bouche. Répétez 3 fois.', action:'Réduit le stress en 1 minute selon les recherches Stanford.' },
       { content:'Respiration alternée : bouchez la narine droite, inspirez à gauche. Bouchez la gauche, expirez à droite. Inversez.', action:'Équilibre les hémisphères cérébraux et apaise.' },
       { content:'Respiration ventrale profonde : main sur le ventre, inspirez 5s en gonflant le ventre, expirez 7s en le rentrant.', action:'Pendant 5 minutes pour un apaisement profond.' }
-    ],
-    quote: [
-      { content:'"Entre le stimulus et la réponse réside un espace. Dans cet espace se trouve notre liberté." — Viktor Frankl', action:'' },
-      { content:'"Vous ne pouvez pas arrêter les vagues, mais vous pouvez apprendre à surfer." — Jon Kabat-Zinn', action:'' },
-      { content:'"La colère est un acide qui peut nuire plus au récipient qui la contient qu\'à l\'objet sur lequel elle se déverse." — Mark Twain', action:'' },
-      { content:'"Cette aussi passera." — Proverbe persan', action:'' },
-      { content:'"Ce n\'est pas le poids qui te brise, c\'est la façon dont tu le portes." — Lou Holtz', action:'' },
-      { content:'"Quand vous vous sentez submergé, rappelez-vous : une chose à la fois. Une seule." — Anne Lamott', action:'' }
     ],
     move: [
       { content:'30 secondes de jumping jacks énergiques. Puis 30 secondes de marche sur place.', action:'Brûle l\'adrénaline du stress et libère des endorphines.' },
@@ -428,14 +429,6 @@ const wellnessLibrary = {
       { content:'3 respirations profondes en levant les bras à l\'inspiration, en les baissant à l\'expiration.', action:'Réveille le corps et le souffle.' },
       { content:'Respiration ventrale : 4 secondes en inspirant par le nez, 6 secondes en expirant par la bouche.', action:'Active la détente naturelle du corps.' }
     ],
-    quote: [
-      { content:'"Le bonheur n\'est pas une destination, c\'est une façon de voyager." — Margaret Lee Runbeck', action:'' },
-      { content:'"Soyez vous-même, les autres sont déjà pris." — Oscar Wilde', action:'' },
-      { content:'"La bienveillance est un langage que les sourds peuvent entendre et les aveugles peuvent voir." — Mark Twain', action:'' },
-      { content:'"Là où il y a de l\'amour, il y a de la vie." — Gandhi', action:'' },
-      { content:'"Ce que vous cherchez vous cherche." — Rûmi', action:'' },
-      { content:'"Vivez chaque jour comme si c\'était votre premier." — Sénèque', action:'' }
-    ],
     move: [
       { content:'Étirez doucement votre cou : rotations lentes 5 fois dans chaque sens. Puis épaules.', action:'Libère les tensions accumulées sans les sentir.' },
       { content:'Marche tranquille de 10 minutes en observant 3 belles choses sur le chemin.', action:'Active la gratitude et l\'attention positive.' },
@@ -451,14 +444,6 @@ const wellnessLibrary = {
       { content:'Méditation de la lumière : visualisez une lumière douce qui s\'étend à chaque expiration.', action:'Renforce les connexions positives du cerveau.' },
       { content:'Respiration partagée : envoyez mentalement votre paix à quelqu\'un que vous aimez.', action:'Amplifie le bien-être par l\'altruisme.' },
       { content:'Pratique du sourire intérieur : souriez doucement et respirez profondément 10 fois.', action:'Active les neurotransmetteurs du bonheur.' }
-    ],
-    quote: [
-      { content:'"La paix vient de l\'intérieur. Ne la cherche pas à l\'extérieur." — Bouddha', action:'' },
-      { content:'"Là où votre attention va, votre énergie coule." — James Redfield', action:'' },
-      { content:'"Le calme est la source du grand pouvoir." — Lao Tseu', action:'' },
-      { content:'"Cultiver la paix intérieure, c\'est planter une graine pour le monde." — Thich Nhat Hanh', action:'' },
-      { content:'"La gratitude transforme ce que nous avons en suffisance." — Melody Beattie', action:'' },
-      { content:'"Le silence est le langage de Dieu, tout le reste est mauvaise traduction." — Rûmi', action:'' }
     ],
     move: [
       { content:'Marche contemplative de 15 minutes en pleine conscience de chaque pas.', action:'Ancre profondément la sérénité dans le corps.' },
@@ -486,10 +471,73 @@ function switchNav(btn, id) {
 // ─── HALO ────────────────────────
 function updateHalo(emotion) {
   const d = haloProps[emotion];
-  document.getElementById('halo').style.background = d.halo;
+  document.getElementById('halo-bg').style.background = d.halo;
+  document.getElementById('eb-aura').style.background = d.aura;
   document.getElementById('halo-dot').style.background = d.dot;
   document.getElementById('halo-label').textContent = d.label;
   document.getElementById('home-state').innerHTML = d.state;
+  document.getElementById('home-message').textContent = d.msg;
+}
+
+// ─── DAILY QUOTES ────────────────
+async function loadDailyQuotes(emotion) {
+  // Vérifier le cache local pour aujourd'hui
+  const today = new Date().toISOString().split('T')[0];
+  const cacheKey = `kairos_quotes_${emotion}_${today}`;
+
+  // Note : on n'utilise pas localStorage (non supporté), on garde en mémoire pour la session
+  if(dailyQuotes[emotion]) return dailyQuotes[emotion];
+
+  isLoadingQuotes = true;
+  try {
+    const r = await fetch('/api/quotes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emotion, date: today })
+    });
+    if(!r.ok) throw new Error('Erreur ' + r.status);
+    const data = await r.json();
+    if(data.quotes && Array.isArray(data.quotes)) {
+      dailyQuotes[emotion] = data.quotes;
+      isLoadingQuotes = false;
+      return data.quotes;
+    }
+    throw new Error('Format invalide');
+  } catch(err) {
+    isLoadingQuotes = false;
+    // Fallback static quotes
+    return getFallbackQuotes(emotion);
+  }
+}
+
+function getFallbackQuotes(emotion) {
+  const fallback = {
+    stress: [
+      { text:'La tempête extérieure ne peut atteindre que celui qui n\'a pas trouvé son centre.', author:'Sagesse contemporaine' },
+      { text:'Respirer, c\'est se rappeler qu\'on est en vie. Et qu\'on a toujours le choix.', author:'Élise Bernard' },
+      { text:'Le stress est un signal, pas une prison. Écoutez-le, puis libérez-vous.', author:'Marc Lefèvre' },
+      { text:'La paix n\'est pas l\'absence de tempête. C\'est trouver le calme en son cœur.', author:'Anonyme moderne' },
+      { text:'Vous n\'êtes pas vos pensées. Vous êtes celui qui les observe.', author:'Pierre Dassault' },
+      { text:'Chaque difficulté est une invitation à découvrir une force que vous ignoriez.', author:'Sophie Aubert' }
+    ],
+    neutral: [
+      { text:'Le banal devient sacré quand on le regarde avec attention.', author:'Camille Roux' },
+      { text:'L\'éveil n\'est pas une montagne à gravir. C\'est un regard à poser.', author:'Antoine Bréhier' },
+      { text:'Aujourd\'hui est un jour parfait pour devenir un peu plus soi-même.', author:'Léa Mounier' },
+      { text:'La conscience est le miroir où chaque chose retrouve sa beauté.', author:'Vincent Galland' },
+      { text:'Entre deux pensées, un espace. Dans cet espace, votre liberté.', author:'Sagesse moderne' },
+      { text:'Cultivez votre jardin intérieur. Le monde extérieur en sera transformé.', author:'Claire Vasseur' }
+    ],
+    calm: [
+      { text:'La sérénité est un trésor que personne ne peut vous voler — sauf vous-même.', author:'Hugo Lemoine' },
+      { text:'Quand l\'eau est calme, elle reflète parfaitement le ciel.', author:'Sagesse zen contemporaine' },
+      { text:'Le silence n\'est pas vide. Il est plein de réponses qu\'on n\'écoute pas assez.', author:'Manon Rivière' },
+      { text:'Honorer son calme, c\'est offrir la paix à tous ceux qui nous entourent.', author:'Théo Beaumont' },
+      { text:'La gratitude est la mémoire du cœur. Cultivez-la chaque jour.', author:'Anonyme' },
+      { text:'Être présent, vraiment présent, c\'est déjà être éveillé.', author:'Émilie Charpentier' }
+    ]
+  };
+  return fallback[emotion] || fallback.calm;
 }
 
 // ─── WELLNESS MODAL ──────────────
@@ -512,7 +560,7 @@ function selectEmotion(emotion) {
   updateHalo(emotion);
   document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
   document.querySelector(`.emotion-btn[data-emotion="${emotion}"]`).classList.add('selected');
-  document.getElementById('modal-intro').textContent = intros[emotion];
+  document.getElementById('modal-intro').textContent = haloProps[emotion].msg;
   proposalIdx = 0;
   refreshWellness();
 }
@@ -525,19 +573,39 @@ function switchWellTab(tab, btn) {
   refreshWellness();
 }
 
-function refreshWellness() {
-  const list = wellnessLibrary[currentEmotion][currentWellTab];
-  const item = list[proposalIdx % list.length];
-  const labels = { breathing: 'Exercice de respiration', quote: 'Citation bienveillante', move: 'Exercice de mouvement' };
-  document.getElementById('wc-cat-label').textContent = labels[currentWellTab];
-  document.getElementById('wc-counter').textContent = `${(proposalIdx % list.length) + 1} / ${list.length}`;
-  document.getElementById('wc-content').textContent = item.content;
-  const actionEl = document.getElementById('wc-action');
-  if(item.action) {
-    actionEl.textContent = '→ ' + item.action;
-    actionEl.style.display = 'block';
+async function refreshWellness() {
+  const labels = { breathing: 'Exercice de respiration', quote: 'Citation du jour', move: 'Exercice de mouvement' };
+  document.getElementById('wc-cat-label').innerHTML = labels[currentWellTab] + (currentWellTab === 'quote' ? '<span class="daily-badge">✨ Jour</span>' : '');
+
+  if(currentWellTab === 'quote') {
+    // Charger les citations du jour
+    document.getElementById('wc-content').textContent = '';
+    document.getElementById('wc-author').style.display = 'none';
+    document.getElementById('wc-action').style.display = 'none';
+    document.getElementById('wc-counter').textContent = '...';
+
+    if(!dailyQuotes[currentEmotion]) {
+      document.getElementById('wc-content').innerHTML = '<div class="wc-loading">✨ Génération des citations du jour...</div>';
+      const quotes = await loadDailyQuotes(currentEmotion);
+      dailyQuotes[currentEmotion] = quotes;
+    }
+
+    const quotes = dailyQuotes[currentEmotion];
+    const item = quotes[proposalIdx % quotes.length];
+    document.getElementById('wc-counter').textContent = `${(proposalIdx % quotes.length) + 1} / ${quotes.length}`;
+    document.getElementById('wc-content').textContent = '« ' + item.text + ' »';
+    document.getElementById('wc-author').textContent = '— ' + item.author;
+    document.getElementById('wc-author').style.display = 'block';
+    document.getElementById('wc-action').style.display = 'none';
   } else {
-    actionEl.style.display = 'none';
+    // Respiration ou mouvement (statique)
+    const list = wellnessLib[currentEmotion][currentWellTab];
+    const item = list[proposalIdx % list.length];
+    document.getElementById('wc-counter').textContent = `${(proposalIdx % list.length) + 1} / ${list.length}`;
+    document.getElementById('wc-content').textContent = item.content;
+    document.getElementById('wc-author').style.display = 'none';
+    document.getElementById('wc-action').textContent = '→ ' + item.action;
+    document.getElementById('wc-action').style.display = 'block';
   }
 }
 
@@ -576,11 +644,10 @@ function toggleMic() {
 }
 
 function startMic(SR) {
-  // Demande permission micro explicitement
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
-        stream.getTracks().forEach(track => track.stop()); // close immediately, just for permission
+        stream.getTracks().forEach(track => track.stop());
         actuallyStartMic(SR);
       })
       .catch(err => {
@@ -597,43 +664,28 @@ function actuallyStartMic(SR) {
     micRecognition.lang = 'fr-FR';
     micRecognition.continuous = true;
     micRecognition.interimResults = true;
-
     micRecognition.onstart = () => {
       micActive = true;
       const b = document.getElementById('mic-btn');
       b.textContent = '⏹ Stop';
       b.classList.add('recording');
     };
-
     micRecognition.onresult = (ev) => {
-      let finalText = '';
-      let interimText = '';
+      let finalText = '', interimText = '';
       for(let i = 0; i < ev.results.length; i++) {
-        if(ev.results[i].isFinal) {
-          finalText += ev.results[i][0].transcript + ' ';
-        } else {
-          interimText += ev.results[i][0].transcript;
-        }
+        if(ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
+        else interimText += ev.results[i][0].transcript;
       }
       document.getElementById('msg-input').value = (finalText + interimText).trim();
       updateChar();
     };
-
     micRecognition.onerror = (e) => {
-      console.log('Mic error:', e.error);
       stopMic();
-      if(e.error === 'not-allowed') {
-        alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
-      }
+      if(e.error === 'not-allowed') alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
     };
-
-    micRecognition.onend = () => {
-      stopMic();
-    };
-
+    micRecognition.onend = () => stopMic();
     micRecognition.start();
   } catch(err) {
-    console.error('Mic start error:', err);
     alert('Erreur de démarrage du micro. Réessayez.');
   }
 }
@@ -721,7 +773,6 @@ function displayResult(r) {
   document.getElementById('score-empathy').textContent = (r.score_empathie || 87) + '%';
   document.getElementById('score-clarity').textContent = (r.score_clarte || 84) + '%';
   document.getElementById('score-reduction').textContent = (r.score_reduction_violence || 91) + '%';
-  // Default to courant
   currentTone = 'courant';
   document.querySelectorAll('.rtt').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-courant').classList.add('active');
