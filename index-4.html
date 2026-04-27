@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kairos — Communication & Émotions</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f0f7f4;--white:#ffffff;
+  --teal:#3a8a7a;--teal2:#2d6e60;--teal-light:#e8f5f1;
+  --gold:#c49a2c;--rose:#e07070;--rose-a:rgba(224,112,112,0.1);
+  --ink:#1a2e28;--ink2:#3d5a52;--muted:#7a9990;
+  --border:rgba(58,138,122,0.15);--border2:rgba(58,138,122,0.3);
+  --shadow:0 4px 24px rgba(58,138,122,0.1);--r:18px;--r-sm:12px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;min-height:100dvh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+
+.halo-bg{position:fixed;top:-100px;left:50%;transform:translateX(-50%);width:380px;height:380px;border-radius:50%;filter:blur(70px);z-index:0;pointer-events:none;opacity:0.7;background:rgba(80,180,120,0.3);transition:background 1.5s ease;}
+
+.app{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
+
+header{padding:18px 20px 14px;display:flex;align-items:center;justify-content:space-between;background:rgba(240,247,244,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-symbol{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:white;font-weight:600;box-shadow:0 4px 12px rgba(58,138,122,0.3);}
+.logo-name{font-family:'Playfair Display',serif;font-size:19px;color:var(--teal2);font-weight:600;line-height:1;}
+.logo-tag{font-size:9px;color:var(--muted);line-height:1.3;max-width:130px;}
+.halo-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--white);border:1px solid var(--border);font-size:11px;color:var(--ink2);font-family:'DM Sans',sans-serif;}
+.halo-dot{width:10px;height:10px;border-radius:50%;background:#50b478;animation:hp 2.5s ease infinite;transition:background 0.5s;}
+@keyframes hp{0%,100%{box-shadow:0 0 0 0 rgba(80,180,120,0.4);}50%{box-shadow:0 0 0 6px rgba(80,180,120,0);}}
+
+.screen{display:none;flex:1;padding:0 18px 100px;}
+.screen.active{display:flex;flex-direction:column;animation:sIn 0.4s ease both;}
+@keyframes sIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+#home{padding-top:24px;align-items:center;text-align:center;}
+.eb-card{position:relative;width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:20px;box-shadow:var(--shadow);overflow:hidden;}
+.eb-aura{position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;filter:blur(35px);opacity:0.5;background:rgba(80,180,120,0.4);pointer-events:none;transition:background 1s ease;}
+.eb-content{position:relative;z-index:2;}
+.eb-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;}
+.eb-state{font-family:'Playfair Display',serif;font-size:20px;color:var(--teal2);margin-bottom:4px;}
+.eb-state em{font-style:italic;}
+.eb-message{font-size:12px;color:var(--muted);font-style:italic;line-height:1.5;}
+
+.home-title{font-family:'Playfair Display',serif;font-size:clamp(26px,6vw,36px);color:var(--teal2);font-weight:600;line-height:1.2;margin-bottom:8px;}
+.home-sub{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:24px;max-width:340px;}
+
+.modules{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:18px;}
+.mod{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px 12px;cursor:pointer;text-align:left;width:100%;font-family:'DM Sans',sans-serif;color:var(--ink);-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-shadow:var(--shadow);transition:all 0.2s;}
+.mod.active-mod{border-color:var(--teal);}
+.mod.locked{opacity:0.5;cursor:not-allowed;}
+.mod-icon{font-size:24px;margin-bottom:8px;}
+.mod-name{font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:2px;}
+.mod-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+.mod-tag{display:inline-block;margin-top:6px;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:10px;border:1px solid;}
+.mod-tag.teal{color:var(--teal);border-color:var(--teal);background:var(--teal-light);}
+.mod-tag.gray{color:var(--muted);border-color:var(--muted);}
+
+.home-cta{width:100%;padding:16px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:white;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:14px;box-shadow:0 8px 24px rgba(58,138,122,0.3);-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+
+.mvp-notice{padding:12px 16px;background:rgba(255,200,100,0.08);border:1px solid rgba(196,154,44,0.22);border-radius:var(--r-sm);font-size:11px;color:var(--ink2);line-height:1.6;text-align:center;}
+.mvp-notice strong{color:var(--gold);}
+
+.screen-back{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;margin-bottom:20px;background:none;border:none;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.screen-kicker{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+.screen-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--ink);margin-bottom:18px;line-height:1.2;}
+.screen-title em{font-style:italic;color:var(--teal2);}
+
+#input{padding-top:20px;}
+.input-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow);}
+.input-label{padding:12px 16px 0;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);}
+textarea{width:100%;background:transparent;border:none;outline:none;color:var(--ink);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;padding:8px 16px 14px;resize:none;min-height:120px;}
+textarea::placeholder{color:#b0c8c0;}
+.input-footer{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-top:1px solid var(--border);gap:6px;}
+.char-count{font-size:11px;color:var(--muted);flex-shrink:0;}
+.mic-btn{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;background:var(--teal-light);border:1px solid var(--border);font-size:11px;color:var(--teal2);font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;flex-shrink:0;}
+.mic-btn.recording{background:var(--rose-a);border-color:var(--rose);color:var(--rose);animation:mp 1s ease infinite;}
+@keyframes mp{0%,100%{box-shadow:0 0 0 0 rgba(224,112,112,0.3);}50%{box-shadow:0 0 0 8px rgba(224,112,112,0);}}
+.clear-btn{font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+
+.examples-label{font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;}
+.examples{display:flex;flex-direction:column;gap:7px;margin-bottom:18px;}
+.example{background:var(--white);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 14px;font-size:13px;color:var(--ink2);line-height:1.5;cursor:pointer;font-style:italic;text-align:left;width:100%;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+
+.transform-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:white;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(58,138,122,0.3);-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.transform-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+.input-mvp{margin-top:10px;padding:10px 14px;background:rgba(255,200,100,0.07);border:1px solid rgba(196,154,44,0.2);border-radius:var(--r-sm);font-size:11px;color:var(--muted);line-height:1.6;text-align:center;}
+.error-box{background:var(--rose-a);border:1px solid rgba(224,112,112,0.3);border-radius:var(--r-sm);padding:12px 16px;font-size:13px;color:#c04040;display:none;margin-bottom:10px;}
+.error-box.show{display:block;}
+
+#loading{align-items:center;justify-content:center;text-align:center;padding-top:80px;}
+.loading-ring{width:78px;height:78px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto 32px;}
+.loading-ring::before{content:'';position:absolute;inset:-2px;border-radius:50%;border:2px solid transparent;border-top-color:var(--teal);animation:rot 1.2s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg);}}
+.loading-symbol{font-family:'Playfair Display',serif;font-size:26px;color:var(--teal2);}
+.loading-phase{font-size:14px;color:var(--muted);display:none;opacity:0;transition:opacity 0.4s;margin-bottom:8px;}
+.loading-phase.show{display:block;opacity:1;}
+.loading-dots{display:flex;gap:8px;justify-content:center;margin-top:14px;}
+.loading-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);opacity:0.3;animation:dp 1.5s ease infinite;}
+.loading-dot:nth-child(2){animation-delay:0.2s;}
+.loading-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes dp{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+#result{padding-top:20px;}
+.result-kicker{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.result-check{width:16px;height:16px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:9px;color:white;}
+.result-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);margin-bottom:16px;line-height:1.25;}
+.result-title em{font-style:italic;color:var(--teal2);}
+
+.result-tone-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.rtt{flex:1;padding:9px 6px;border-radius:var(--r-sm);border:1.5px solid var(--border);background:var(--white);font-size:11px;font-weight:500;cursor:pointer;text-align:center;color:var(--ink2);font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all 0.2s;}
+.rtt.active{border-color:var(--teal);background:var(--teal-light);color:var(--teal2);}
+
+.original-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:6px;}
+.original-label{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.original-text{font-size:13px;color:var(--ink2);line-height:1.6;font-style:italic;}
+.original-arrow{text-align:center;font-size:16px;color:var(--teal);margin:6px 0;}
+
+.cnv-steps{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+.cnv-step{border-radius:var(--r);padding:14px 16px;border:1.5px solid;animation:stp 0.5s ease both;}
+@keyframes stp{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.cnv-step:nth-child(1){animation-delay:0.1s;background:#f0faf6;border-color:rgba(58,138,122,0.25);}
+.cnv-step:nth-child(2){animation-delay:0.2s;background:#fdf8ee;border-color:rgba(196,154,44,0.25);}
+.cnv-step:nth-child(3){animation-delay:0.3s;background:#f0f5fb;border-color:rgba(80,120,180,0.25);}
+.cnv-step:nth-child(4){animation-delay:0.4s;background:#faf0f8;border-color:rgba(160,90,180,0.25);}
+.step-header-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.step-badge{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+.cnv-step:nth-child(1) .step-badge{background:rgba(58,138,122,0.15);color:var(--teal2);}
+.cnv-step:nth-child(2) .step-badge{background:rgba(196,154,44,0.15);color:var(--gold);}
+.cnv-step:nth-child(3) .step-badge{background:rgba(80,120,180,0.15);color:#5078b4;}
+.cnv-step:nth-child(4) .step-badge{background:rgba(160,90,180,0.15);color:#a05ab4;}
+.step-label{font-size:9px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;}
+.cnv-step:nth-child(1) .step-label{color:var(--teal2);}
+.cnv-step:nth-child(2) .step-label{color:var(--gold);}
+.cnv-step:nth-child(3) .step-label{color:#5078b4;}
+.cnv-step:nth-child(4) .step-label{color:#a05ab4;}
+.step-text{font-size:14px;color:var(--ink);line-height:1.65;}
+
+.score-row{display:flex;gap:8px;margin-bottom:14px;}
+.score-card{flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r-sm);padding:12px 8px;text-align:center;animation:stp 0.5s ease 0.5s both;}
+.score-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;margin-bottom:2px;}
+.score-val.green{color:var(--teal);}
+.score-val.gold{color:var(--gold);}
+.score-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;}
+
+.full-message{background:linear-gradient(135deg,var(--teal-light),#f0f8f5);border:1.5px solid var(--border2);border-radius:var(--r);padding:16px 18px;margin-bottom:14px;animation:stp 0.5s ease 0.6s both;}
+.full-message-label{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.full-message-text{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink);line-height:1.8;font-style:italic;}
+
+.actions{display:flex;gap:10px;animation:stp 0.5s ease 0.7s both;}
+.btn-copy{flex:1;padding:14px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:white;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.btn-again{padding:14px 16px;background:var(--white);color:var(--ink2);border:1.5px solid var(--border);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100;background:rgba(255,255,255,0.96);backdrop-filter:blur(16px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 22px;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 16px;opacity:0.45;-webkit-tap-highlight-color:transparent;touch-action:manipulation;border:none;background:none;font-family:'DM Sans',sans-serif;}
+.nav-item.active{opacity:1;}
+.nav-icon{font-size:20px;}
+.nav-label{font-size:9px;color:var(--ink2);letter-spacing:0.06em;text-transform:uppercase;}
+.nav-item.active .nav-label{color:var(--teal);font-weight:600;}
+
+/* ════ VIDE TON SAC ════ */
+#journal-input{padding-top:20px;}
+.journal-intro{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--ink2);line-height:1.6;}
+.journal-intro strong{color:var(--teal2);}
+.cycle-badge{display:inline-block;background:var(--teal-light);border:1px solid var(--border);color:var(--teal2);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;}
+
+#journal-response{padding-top:20px;}
+.jr-empathy-card{background:var(--white);border:1.5px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);animation:stp 0.5s ease both;}
+.jr-empathy-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.jr-block{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+.jr-block:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.jr-block-label{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.jr-block-text{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink2);line-height:1.7;font-style:italic;}
+
+.jr-paths{margin-bottom:18px;}
+.jr-paths-title{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;text-align:center;}
+.jr-paths-tabs{display:flex;gap:6px;background:var(--bg);padding:4px;border-radius:50px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;}
+.jr-paths-tabs::-webkit-scrollbar{display:none;}
+.jr-path-btn{flex:1 0 auto;min-width:80px;padding:8px 10px;border-radius:50px;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;white-space:nowrap;}
+.jr-path-btn.active{background:var(--white);color:var(--teal2);box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.jr-path-content{background:var(--teal-light);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.jr-path-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.jr-path-counter{margin-left:auto;font-size:10px;color:var(--muted);background:var(--white);padding:2px 8px;border-radius:10px;}
+.jr-path-text{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink2);line-height:1.7;font-style:italic;margin-bottom:6px;min-height:50px;}
+.jr-path-author{font-size:11px;color:var(--teal);font-weight:500;margin-bottom:10px;text-align:right;}
+.jr-path-action{font-size:12px;color:var(--teal2);margin-bottom:12px;padding:9px;background:var(--white);border-radius:var(--r-sm);border-left:3px solid var(--teal);}
+.jr-path-next{width:100%;padding:9px;background:var(--white);border:1.5px solid var(--teal);color:var(--teal2);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.jr-path-loading{text-align:center;color:var(--muted);font-size:13px;font-style:italic;padding:14px;}
+
+.jr-eval{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);}
+.jr-eval-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--ink);margin-bottom:12px;text-align:center;}
+.jr-eval-buttons{display:flex;gap:8px;}
+.jr-eval-btn{flex:1;padding:14px 6px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);font-family:'DM Sans',sans-serif;font-size:11px;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;color:var(--ink2);transition:all 0.2s;}
+.jr-eval-btn .je-icon{font-size:24px;display:block;margin-bottom:4px;}
+.jr-eval-btn.stress:hover{border-color:#e05a5a;background:rgba(224,90,90,0.05);}
+.jr-eval-btn.neutral:hover{border-color:var(--gold);background:rgba(196,154,44,0.05);}
+.jr-eval-btn.calm:hover{border-color:var(--teal);background:var(--teal-light);}
+
+#journal-end{padding-top:30px;text-align:center;}
+.je-celebration{font-size:42px;margin-bottom:14px;animation:celebrate 1s ease;}
+@keyframes celebrate{0%{transform:scale(0.5);opacity:0;}50%{transform:scale(1.3);}100%{transform:scale(1);opacity:1;}}
+.je-conclusion{font-family:'Playfair Display',serif;font-size:18px;color:var(--ink);line-height:1.6;font-style:italic;margin-bottom:24px;padding:20px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);}
+.je-buttons{display:flex;flex-direction:column;gap:10px;}
+.je-btn-primary{padding:15px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:white;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.je-btn-secondary{padding:15px;background:var(--white);color:var(--ink2);border:1.5px solid var(--border);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+
+.je-pro-help{background:linear-gradient(135deg,var(--teal-light),#f0f8f5);border:1.5px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:18px;text-align:left;}
+.je-pro-label{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;font-weight:600;}
+.je-pro-text{font-size:13px;color:var(--ink2);line-height:1.6;margin-bottom:14px;}
+.je-pro-list{display:flex;flex-direction:column;gap:8px;}
+.je-pro-item{display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--white);border-radius:var(--r-sm);border:1px solid var(--border);font-size:12px;color:var(--ink2);text-decoration:none;}
+.je-pro-icon{width:30px;height:30px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.je-pro-name{flex:1;font-weight:500;}
+.je-pro-call{font-family:'Playfair Display',serif;font-size:14px;color:var(--teal2);font-weight:600;}
+
+/* URGENCY SCREEN */
+#urgency{padding-top:24px;}
+.urg-header{text-align:center;margin-bottom:24px;}
+.urg-icon-wrap{display:flex;justify-content:center;margin-bottom:14px;}
+.urg-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 24px rgba(58,138,122,0.3);}
+.urg-kicker{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;font-weight:600;}
+.urg-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);line-height:1.25;margin-bottom:12px;}
+.urg-sub{font-size:13px;color:var(--ink2);line-height:1.7;}
+.urg-numbers{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.urg-number{background:var(--white);border:2px solid var(--teal);border-radius:var(--r);padding:14px;display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:'DM Sans',sans-serif;}
+.urg-num-icon{width:40px;height:40px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.urg-num-info{flex:1;}
+.urg-num-name{font-size:13px;font-weight:600;color:var(--ink);}
+.urg-num-desc{font-size:11px;color:var(--muted);line-height:1.4;margin-top:2px;}
+.urg-num-call{font-family:'Playfair Display',serif;font-size:18px;color:var(--teal2);font-weight:600;flex-shrink:0;}
+.urg-script-block{background:var(--teal-light);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
+.urg-script-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:8px;font-weight:600;}
+.urg-script{font-family:'Playfair Display',serif;font-size:14px;color:var(--ink2);line-height:1.7;font-style:italic;padding:12px;background:var(--white);border-radius:var(--r-sm);border-left:3px solid var(--teal);}
+.urg-back{padding:10px 20px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:10px;}
+.urg-confid{font-size:11px;color:var(--muted);font-style:italic;line-height:1.5;text-align:center;margin-top:14px;}
+</style>
+</head>
+<body>
+
+<div class="halo-bg" id="halo-bg"></div>
+
+<div class="app">
+  <header>
+    <div class="logo">
+      <div class="logo-symbol">K</div>
+      <div>
+        <div class="logo-name">Kairos</div>
+        <div class="logo-tag">Communication & gestion des émotions</div>
+      </div>
+    </div>
+    <div class="halo-btn">
+      <div class="halo-dot" id="halo-dot"></div>
+      <span id="halo-label">Calme</span>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="eb-card">
+      <div class="eb-aura" id="eb-aura"></div>
+      <div class="eb-content">
+        <div class="eb-label">Votre état émotionnel</div>
+        <div class="eb-state" id="home-state">🌿 <em>Calme & centré</em></div>
+        <div class="eb-message" id="home-message">Bienvenue sur Kairos. Choisissez un module pour commencer.</div>
+      </div>
+    </div>
+
+    <h1 class="home-title">Aujourd'hui,<br>communiquons <em>mieux.</em></h1>
+    <p class="home-sub">L'IA qui transforme vos messages en communication bienveillante, éloquente et efficace.</p>
+
+    <div class="modules">
+      <button class="mod active-mod" type="button" onclick="goTo('input')">
+        <div class="mod-icon">🕊️</div>
+        <div class="mod-name">Reformuler</div>
+        <div class="mod-desc">Transformez un message en CNV</div>
+        <div class="mod-tag teal">Disponible</div>
+      </button>
+      <button class="mod active-mod" type="button" onclick="startJournal()">
+        <div class="mod-icon">🎙️</div>
+        <div class="mod-name">Vide ton sac</div>
+        <div class="mod-desc">Exprimez vos émotions en sécurité</div>
+        <div class="mod-tag teal">Disponible</div>
+      </button>
+      <button class="mod locked" type="button" disabled>
+        <div class="mod-icon">💪</div>
+        <div class="mod-name">S'entraîner</div>
+        <div class="mod-desc">Communiquer efficacement pour valoriser la confiance en soi</div>
+        <div class="mod-tag gray">Bientôt</div>
+      </button>
+      <button class="mod locked" type="button" disabled>
+        <div class="mod-icon">⚖️</div>
+        <div class="mod-name">Mes droits</div>
+        <div class="mod-desc">Assistant juridique</div>
+        <div class="mod-tag gray">Bientôt</div>
+      </button>
+    </div>
+
+    <button class="home-cta" type="button" onclick="goTo('input')">✦ Reformuler un message maintenant</button>
+    <div class="mvp-notice">
+      🧪 <strong>MVP en test</strong> — Vos messages ne sont pas stockés mais transitent via des serveurs américains. Version finale sur serveurs 🇫🇷. Votre message est traité puis immédiatement supprimé — rien n'est conservé.
+    </div>
+  </div>
+
+  <!-- REFORMULATEUR INPUT -->
+  <div id="input" class="screen">
+    <button class="screen-back" type="button" onclick="goTo('home')">← Retour</button>
+    <div class="screen-kicker">Reformulateur CNV</div>
+    <h2 class="screen-title">Quel message voulez-vous <em>transformer</em> ?</h2>
+
+    <div class="input-card">
+      <div class="input-label">Votre message</div>
+      <textarea id="msg-input" placeholder="Écrivez ou dictez votre message..." oninput="updateChar()" maxlength="800"></textarea>
+      <div class="input-footer">
+        <span class="char-count" id="char-count">0 / 800</span>
+        <button class="mic-btn" type="button" id="mic-btn" onclick="toggleMic('msg-input','mic-btn','transform-btn')">🎤 Dicter</button>
+        <button class="clear-btn" type="button" onclick="clearInput()">✕</button>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box">⚠️ <span id="error-msg"></span></div>
+
+    <div class="examples-label">Exemples</div>
+    <div class="examples">
+      <button class="example" type="button" onclick="useExample(this)">"T'as encore oublié ! Tu t'en fous complètement de moi, comme d'habitude."</button>
+      <button class="example" type="button" onclick="useExample(this)">"C'est inadmissible ! Votre service est nul et vous ne faites rien pour résoudre le problème."</button>
+      <button class="example" type="button" onclick="useExample(this)">"Tu ne m'écoutes jamais ! À chaque fois c'est pareil, tu fais comme si je n'existais pas."</button>
+    </div>
+
+    <button class="transform-btn" type="button" id="transform-btn" onclick="transformMessage()" disabled>✦ Transformer en CNV</button>
+    <div class="input-mvp">🔒 Votre message est traité puis immédiatement supprimé — rien n'est conservé.</div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading" class="screen">
+    <div class="loading-ring"><div class="loading-symbol">K</div></div>
+    <div id="phase-1" class="loading-phase">Analyse en cours...</div>
+    <div id="phase-2" class="loading-phase">Compréhension empathique...</div>
+    <div id="phase-3" class="loading-phase">Génération de la réponse...</div>
+    <div id="phase-4" class="loading-phase">Finalisation...</div>
+    <div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+  </div>
+
+  <!-- REFORMULATEUR RESULT -->
+  <div id="result" class="screen">
+    <div class="result-kicker"><div class="result-check">✓</div>Message transformé</div>
+    <h2 class="result-title">Votre message en <em>communication non-violente</em></h2>
+
+    <div class="result-tone-tabs">
+      <button class="rtt active" type="button" id="tab-courant" onclick="switchToneTab('courant',this)">🤝 Registre courant</button>
+      <button class="rtt" type="button" id="tab-soutenu" onclick="switchToneTab('soutenu',this)">👔 Registre soutenu</button>
+    </div>
+
+    <div class="original-box">
+      <div class="original-label">Message original</div>
+      <div class="original-text" id="original-display"></div>
+    </div>
+    <div class="original-arrow">↓</div>
+
+    <div class="cnv-steps">
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">1</div><div class="step-label">Observation</div></div><div class="step-text" id="step-obs">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">2</div><div class="step-label">Sentiment</div></div><div class="step-text" id="step-sent">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">3</div><div class="step-label">Besoin</div></div><div class="step-text" id="step-need">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">4</div><div class="step-label">Demande</div></div><div class="step-text" id="step-req">—</div></div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-card"><div class="score-val green" id="score-empathy">—</div><div class="score-label">Empathie</div></div>
+      <div class="score-card"><div class="score-val gold" id="score-clarity">—</div><div class="score-label">Clarté</div></div>
+      <div class="score-card"><div class="score-val green" id="score-reduction">—</div><div class="score-label">Violence −</div></div>
+    </div>
+
+    <div class="full-message">
+      <div class="full-message-label">✦ Message complet reformulé</div>
+      <div class="full-message-text" id="full-message-text">—</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-copy" type="button" id="copy-btn" onclick="copyResult()">📋 Copier</button>
+      <button class="btn-again" type="button" onclick="goTo('input')">Nouveau ↻</button>
+    </div>
+  </div>
+
+  <!-- ════ VIDE TON SAC : INPUT ════ -->
+  <div id="journal-input" class="screen">
+    <button class="screen-back" type="button" onclick="exitJournal()">← Retour</button>
+    <div class="screen-kicker">Vide ton sac</div>
+    <h2 class="screen-title" id="journal-title">Posez ce que vous avez <em>sur le cœur</em></h2>
+    <div id="cycle-display"></div>
+
+    <div class="journal-intro">
+      <strong>Ce moment est à vous.</strong> Écrivez ou dictez librement ce qui vous traverse — colère, tristesse, joie, doute. L'IA écoute avec bienveillance et propose des chemins pour aller mieux. Aucune trace n'est conservée.
+    </div>
+
+    <div class="input-card">
+      <div class="input-label">Ce que je ressens</div>
+      <textarea id="journal-msg" placeholder="Exprimez ce que vous traversez, sans filtre, sans jugement..." oninput="updateJournalChar()" maxlength="2000"></textarea>
+      <div class="input-footer">
+        <span class="char-count" id="journal-char">0 / 2000</span>
+        <button class="mic-btn" type="button" id="journal-mic-btn" onclick="toggleMic('journal-msg','journal-mic-btn','journal-send-btn')">🎤 Dicter</button>
+        <button class="clear-btn" type="button" onclick="clearJournal()">✕</button>
+      </div>
+    </div>
+
+    <div class="error-box" id="journal-error">⚠️ <span id="journal-error-msg"></span></div>
+
+    <button class="transform-btn" type="button" id="journal-send-btn" onclick="sendJournal()" disabled>✨ Partager avec Kairos</button>
+    <div class="input-mvp">🔒 Votre expression est traitée puis immédiatement supprimée — rien n'est conservé.</div>
+  </div>
+
+  <!-- ════ VIDE TON SAC : RESPONSE ════ -->
+  <div id="journal-response" class="screen">
+    <div class="screen-kicker">Réponse de Kairos</div>
+    <h2 class="screen-title">Voici ce que <em>j'entends</em></h2>
+
+    <div class="jr-empathy-card">
+      <div class="jr-block">
+        <div class="jr-block-label">💗 Reformulation</div>
+        <div class="jr-block-text" id="jr-reformulation">—</div>
+      </div>
+      <div class="jr-block">
+        <div class="jr-block-label">💭 Une question pour ouvrir</div>
+        <div class="jr-block-text" id="jr-question">—</div>
+      </div>
+      <div class="jr-block">
+        <div class="jr-block-label">✨ Une perspective</div>
+        <div class="jr-block-text" id="jr-perspective">—</div>
+      </div>
+    </div>
+
+    <div class="jr-paths">
+      <div class="jr-paths-title">Si vous le souhaitez, voici quelques chemins — empruntez celui qui vous appelle</div>
+      <div class="jr-paths-tabs">
+        <button class="jr-path-btn active" type="button" id="jp-breathing" onclick="switchJourPath('breathing',this)">🌬️ Respirer</button>
+        <button class="jr-path-btn" type="button" id="jp-move" onclick="switchJourPath('move',this)">🏃 Bouger</button>
+        <button class="jr-path-btn" type="button" id="jp-write" onclick="switchJourPath('write',this)">✍️ Écrire</button>
+        <button class="jr-path-btn" type="button" id="jp-quote" onclick="switchJourPath('quote',this)">💭 Sagesse</button>
+        <button class="jr-path-btn" type="button" id="jp-act" onclick="switchJourPath('act',this)">🌱 Agir</button>
+      </div>
+      <div class="jr-path-content">
+        <div class="jr-path-label">
+          <span id="jp-cat-label">Exercice de respiration</span>
+          <span class="jr-path-counter" id="jp-counter">1 / 5</span>
+        </div>
+        <div class="jr-path-text" id="jp-text"></div>
+        <div class="jr-path-author" id="jp-author" style="display:none;"></div>
+        <div class="jr-path-action" id="jp-action"></div>
+
+        <!-- Zone d'écriture libératrice -->
+        <div id="jp-write-zone" style="display:none;">
+          <textarea id="jp-write-textarea" placeholder="Laissez les mots couler. Cette lettre n'a pas besoin d'être parfaite — elle a juste besoin d'exister." style="width:100%;min-height:160px;padding:14px;border:1.5px solid var(--border);border-radius:var(--r-sm);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;color:var(--ink);background:var(--white);resize:vertical;outline:none;margin-bottom:12px;"></textarea>
+          <button class="jr-path-next" type="button" onclick="closeWriting()">✓ J'ai terminé d'écrire</button>
+          <div id="jp-write-confirm" style="display:none;margin-top:12px;padding:14px;background:var(--teal-light);border-radius:var(--r-sm);font-family:'Playfair Display',serif;font-size:14px;color:var(--teal2);font-style:italic;text-align:center;line-height:1.6;">
+            Cette lettre est à vous. Elle a fait son travail. Vous pouvez la fermer.
+          </div>
+        </div>
+
+        <button class="jr-path-next" type="button" id="jp-next-btn" onclick="nextPathProposal()">↻ Autre proposition</button>
+      </div>
+    </div>
+
+    <div class="jr-eval">
+      <div class="jr-eval-title">Comment vous sentez-vous <em>maintenant</em> ?</div>
+      <div class="jr-eval-buttons">
+        <button class="jr-eval-btn stress" type="button" onclick="evalJournal('stress')"><span class="je-icon">😤</span>Encore tendu</button>
+        <button class="jr-eval-btn neutral" type="button" onclick="evalJournal('neutral')"><span class="je-icon">😐</span>Apaisé</button>
+        <button class="jr-eval-btn calm" type="button" onclick="evalJournal('calm')"><span class="je-icon">🌿</span>Serein</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ VIDE TON SAC : END ════ -->
+  <div id="journal-end" class="screen">
+    <div class="je-celebration" id="je-celebration">🌿</div>
+    <div class="je-conclusion" id="je-conclusion">—</div>
+    <div id="je-pro-help-container"></div>
+    <div class="je-buttons">
+      <button class="je-btn-primary" id="je-btn-primary" onclick="finishJournal()">Revenir à l'accueil</button>
+      <button class="je-btn-secondary" id="je-btn-secondary" style="display:none;" onclick="restartJournalCycle()">Exprimer encore</button>
+    </div>
+  </div>
+
+  <!-- ════ URGENCY SCREEN ════ -->
+  <div id="urgency" class="screen">
+    <div class="urg-header">
+      <div class="urg-icon-wrap"><div class="urg-icon">🤝</div></div>
+      <div class="urg-kicker">Vous n'êtes pas seul(e)</div>
+      <h2 class="urg-title" id="urg-title">Une situation grave mérite un vrai soutien</h2>
+      <p class="urg-sub" id="urg-sub">Ce que vous traversez nécessite une aide professionnelle. Des spécialistes formés sont disponibles maintenant, gratuitement et de façon confidentielle.</p>
+    </div>
+    <div class="urg-numbers" id="urg-numbers"></div>
+    <div class="urg-script-block">
+      <div class="urg-script-label">💬 Si vous ne savez pas par où commencer</div>
+      <div class="urg-script" id="urg-script"></div>
+    </div>
+    <button class="urg-back" type="button" onclick="goTo('home')">Revenir à l'accueil</button>
+    <p class="urg-confid">🔒 Aucune trace de cet échange n'est conservée.</p>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" type="button" onclick="switchNav(this,'home')"><span class="nav-icon">🏠</span><span class="nav-label">Accueil</span></button>
+    <button class="nav-item" type="button"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
+  </nav>
+</div>
+
+<script>
+// ═══ STATE ═══
+let currentMessage='', lastResult=null, currentTone='courant';
+let micRecognition=null, micActive=false;
+let micFinalBuffer='', micExistingText='', micCompletedSentences='';
+let micActiveTextarea='', micActiveBtnId='', micActiveSendBtnId='';
+
+// Journal state
+let journalCycle=1, journalLastResponse=null, journalLastEmotion='neutral';
+let currentJourPath='breathing', jourPathIdx=0;
+let dailyJourQuotes={stress:null,neutral:null,calm:null};
+
+// Halo properties
+const haloProps={
+  stress:{halo:'rgba(220,80,80,0.35)',aura:'rgba(220,80,80,0.5)',dot:'#e05a5a',label:'Stressé',state:'😤 <em>Tension détectée</em>',msg:'Vous êtes sous tension. Voici des outils pour retrouver votre calme.'},
+  neutral:{halo:'rgba(220,180,60,0.35)',aura:'rgba(220,180,60,0.5)',dot:'#d4a020',label:'Neutre',state:'😐 <em>État neutre</em>',msg:'État neutre. Voici des pratiques pour cultiver présence et bienveillance.'},
+  calm:{halo:'rgba(80,180,120,0.35)',aura:'rgba(80,180,120,0.5)',dot:'#50b478',label:'Calme',state:'🌿 <em>Calme & centré</em>',msg:'Vous êtes serein. Voici de quoi cultiver et amplifier cet état.'}
+};
+
+// Wellness library (respiration + mouvement statiques)
+const wellnessLib={
+  stress:{
+    breathing:[
+      {content:'Respiration 4-4-6 : inspirez sur 4 temps, retenez 4, expirez sur 6. Répétez 5 fois.',action:'Active le système parasympathique en moins de 2 minutes.'},
+      {content:'Respiration carrée : inspirez 4s, retenez 4s, expirez 4s, retenez 4s. Visualisez un carré.',action:'Technique des forces spéciales pour reprendre le contrôle.'},
+      {content:'Soupir physiologique : double inspiration courte par le nez, puis longue expiration. Répétez 3 fois.',action:'Réduit le stress en 1 minute (recherches Stanford).'},
+      {content:'Respiration alternée : narine droite bouchée, inspirez à gauche. Inversez pour expirer.',action:'Équilibre les hémisphères cérébraux.'},
+      {content:'Respiration ventrale profonde : main sur le ventre, inspirez 5s, expirez 7s.',action:'Pendant 5 minutes pour un apaisement profond.'}
+    ],
+    move:[
+      {content:'30 secondes de jumping jacks énergiques. Puis 30 secondes de marche sur place.',action:'Brûle l\'adrénaline du stress.'},
+      {content:'5 minutes de marche rapide à l\'extérieur. Concentrez-vous sur vos pas.',action:'Nature + mouvement : effets apaisants combinés.'},
+      {content:'Secouez tout votre corps pendant 1 minute. Comme un animal après un stress.',action:'Décharge physique du stress accumulé.'},
+      {content:'10 squats puissants suivis de 10 respirations profondes. Répétez 3 fois.',action:'Recâble le système nerveux.'},
+      {content:'Frappez un coussin pendant 30 secondes. Puis 1 minute de respiration calme.',action:'Évacue physiquement la colère.'}
+    ]
+  },
+  neutral:{
+    breathing:[
+      {content:'Respiration consciente : observez votre souffle pendant 2 minutes. Sans rien changer.',action:'L\'observation seule transforme déjà l\'état.'},
+      {content:'Cohérence cardiaque : 5s d\'inspiration, 5s d\'expiration. Pendant 5 minutes.',action:'Synchronise rythme cardiaque et respiration.'},
+      {content:'Pleine conscience : comptez vos respirations de 1 à 10. Recommencez.',action:'Ancre dans le moment présent.'},
+      {content:'3 respirations profondes en levant les bras à l\'inspiration.',action:'Réveille le corps et le souffle.'},
+      {content:'Respiration ventrale : 4s d\'inspiration par le nez, 6s d\'expiration par la bouche.',action:'Active la détente naturelle.'}
+    ],
+    move:[
+      {content:'Étirez doucement votre cou : rotations lentes 5 fois dans chaque sens.',action:'Libère les tensions cachées.'},
+      {content:'Marche tranquille de 10 minutes en observant 3 belles choses.',action:'Active la gratitude.'},
+      {content:'5 minutes de yoga doux : montagne, chien tête en bas, posture de l\'enfant.',action:'Réveille le corps en douceur.'},
+      {content:'Étirements latéraux : bras au ciel, penchez à droite 30s, puis gauche.',action:'Ouvre les flancs.'},
+      {content:'Marchez pieds nus pendant 5 minutes.',action:'Reconnecte au sol.'}
+    ]
+  },
+  calm:{
+    breathing:[
+      {content:'Respiration de gratitude : à l\'inspiration "merci", à l\'expiration "paix".',action:'Cultive et amplifie votre état actuel.'},
+      {content:'Respiration profonde et silencieuse pendant 5 minutes, paupières mi-closes.',action:'Approfondit la sérénité.'},
+      {content:'Méditation de la lumière : visualisez une lumière douce qui s\'étend.',action:'Renforce les connexions positives.'},
+      {content:'Respiration partagée : envoyez mentalement votre paix à quelqu\'un que vous aimez.',action:'Amplifie le bien-être par l\'altruisme.'},
+      {content:'Sourire intérieur : souriez doucement et respirez profondément 10 fois.',action:'Active les neurotransmetteurs du bonheur.'}
+    ],
+    move:[
+      {content:'Marche contemplative de 15 minutes en pleine conscience de chaque pas.',action:'Ancre la sérénité dans le corps.'},
+      {content:'Salutation au soleil lente : 3 cycles complets en respirant profondément.',action:'Honore le corps.'},
+      {content:'Yoga doux ou tai-chi pendant 10 minutes. Mouvements lents.',action:'Approfondit la connexion corps-esprit.'},
+      {content:'Étirement complet avec micro-mouvements et observation des sensations.',action:'Cultive une présence corporelle totale.'},
+      {content:'Danse libre sur une musique douce pendant 5 minutes, yeux fermés.',action:'Célèbre ce moment.'}
+    ]
+  }
+};
+
+// URGENCY DATA
+const urgencyData={
+  suicide:{title:"Votre vie compte. Parlons-en avec quelqu'un de qualifié.",sub:"Ce que vous traversez est immense. Des professionnels formés à la prévention du suicide sont disponibles 24h/24, gratuitement, confidentiellement.",numbers:[{name:"3114 — Prévention du suicide",desc:"Gratuit · 24h/24 · 7j/7",call:"3114"},{name:"SOS Amitié",desc:"Écoute anonyme",call:"0972394050"},{name:"15 — SAMU",desc:"En cas de geste imminent",call:"15"}],script:"« Bonjour, je m'appelle [prénom]. Je traverse un moment très difficile. J'ai des pensées qui me font peur. J'avais besoin d'en parler. »"},
+  violence_conjugale:{title:"Vous avez le droit de vivre en sécurité.",sub:"Ce que vous subissez n'est jamais de votre faute. Des associations spécialisées peuvent vous aider à votre rythme.",numbers:[{name:"3919 — Violences Femmes Info",desc:"Anonyme · Gratuit · 24h/24 · Invisible sur factures",call:"3919"},{name:"17 — Police Secours",desc:"En cas de danger immédiat",call:"17"}],script:"« Bonjour, j'ai besoin d'aide. Je vis des violences chez moi. Je voudrais comprendre mes options. »"},
+  viol:{title:"Ce que vous avez vécu est un crime. Vous serez cru(e).",sub:"Une agression sexuelle nécessite une prise en charge médicale ET juridique rapide. Des professionnels formés sont là sans jugement.",numbers:[{name:"Viols Femmes Informations",desc:"Gratuit · Anonyme · Lun-Ven 10h-19h",call:"0800059595"},{name:"3919 — Violences Femmes Info",desc:"24h/24 · Anonyme",call:"3919"},{name:"17 — Police Secours",desc:"Pour porter plainte",call:"17"}],script:"« Bonjour, j'ai été victime d'une agression sexuelle. J'aurais besoin d'être conseillé(e) sur les démarches. »"},
+  harcelement_grave:{title:"Le harcèlement n'est pas une fatalité. Vous avez des droits.",sub:"Le harcèlement est puni par la loi française. Des professionnels peuvent vous aider à constituer un dossier.",numbers:[{name:"3018 — Harcèlement",desc:"Numérique, scolaire, sexuel · Gratuit",call:"3018"},{name:"3020 — Harcèlement scolaire",desc:"Numéro national gratuit",call:"3020"}],script:"« Bonjour, je subis du harcèlement et j'aimerais savoir comment me protéger. »"},
+  violence_enfant:{title:"Protéger un enfant est une priorité absolue.",sub:"Si vous avez connaissance d'une maltraitance sur un enfant, vous pouvez et devez signaler. Anonyme.",numbers:[{name:"119 — Allô Enfance en Danger",desc:"24h/24 · Gratuit · Anonyme",call:"119"},{name:"17 — Police Secours",desc:"Danger immédiat",call:"17"}],script:"« Bonjour, je voudrais signaler une situation qui m'inquiète concernant un enfant. »"}
+};
+
+// ═══ NAVIGATION ═══
+function goTo(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function switchNav(btn,id){document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));btn.classList.add('active');goTo(id);}
+
+// ═══ HALO ═══
+function updateHalo(emotion){
+  const d=haloProps[emotion];
+  document.getElementById('halo-bg').style.background=d.halo;
+  document.getElementById('eb-aura').style.background=d.aura;
+  document.getElementById('halo-dot').style.background=d.dot;
+  document.getElementById('halo-label').textContent=d.label;
+  document.getElementById('home-state').innerHTML=d.state;
+  document.getElementById('home-message').textContent=d.msg;
+}
+
+// ═══ MICROPHONE (universel pour input + journal) ═══
+function toggleMic(textareaId,btnId,sendBtnId){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('La dictée vocale nécessite Chrome ou Edge.');return;}
+  if(micActive){stopMic();}
+  else{
+    micActiveTextarea=textareaId;
+    micActiveBtnId=btnId;
+    micActiveSendBtnId=sendBtnId;
+    startMic(SR);
+  }
+}
+
+function startMic(SR){
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true})
+      .then(stream=>{stream.getTracks().forEach(t=>t.stop());actuallyStartMic(SR);})
+      .catch(err=>alert('Autorisez l\'accès au microphone.'));
+  }else{actuallyStartMic(SR);}
+}
+
+function actuallyStartMic(SR){
+  try{
+    micRecognition=new SR();
+    micRecognition.lang='fr-FR';
+    micRecognition.continuous=true;
+    micRecognition.interimResults=false;
+    micRecognition.maxAlternatives=1;
+
+    micExistingText=document.getElementById(micActiveTextarea).value.trim();
+    if(micExistingText.length>0&&!micExistingText.endsWith(' '))micExistingText+=' ';
+    micFinalBuffer='';
+    micCompletedSentences='';
+
+    let autoStopTimer=null;
+    const SILENCE_MS=3000;
+    let hasSpoken=false;
+
+    function scheduleAutoStop(){
+      if(autoStopTimer)clearTimeout(autoStopTimer);
+      autoStopTimer=setTimeout(()=>{
+        if(micActive&&hasSpoken){
+          if(micFinalBuffer.trim().length>0){micCompletedSentences+=micFinalBuffer+'. ';micFinalBuffer='';}
+          stopMic();
+        }
+      },SILENCE_MS);
+    }
+
+    micRecognition.onstart=()=>{
+      micActive=true;
+      const b=document.getElementById(micActiveBtnId);
+      b.textContent='⏹ Stop';b.classList.add('recording');
+    };
+
+    micRecognition.onresult=(ev)=>{
+      hasSpoken=true;
+      const last=ev.results[ev.results.length-1];
+      if(last&&last.isFinal){
+        let cleaned=last[0].transcript.trim();
+        if(cleaned.length>0){
+          const prefix=micExistingText+micCompletedSentences;
+          if(prefix.trim()===''){cleaned=cleaned.charAt(0).toUpperCase()+cleaned.slice(1);}
+          else{const lc=prefix.trim().slice(-1);if(['.','!','?'].includes(lc))cleaned=cleaned.charAt(0).toUpperCase()+cleaned.slice(1);}
+          micFinalBuffer=cleaned;
+          const fullText=(micExistingText+micCompletedSentences+micFinalBuffer).replace(/\s+/g,' ').trim();
+          document.getElementById(micActiveTextarea).value=fullText;
+          if(micActiveTextarea==='msg-input')updateChar();
+          else updateJournalChar();
+        }
+        scheduleAutoStop();
+      }
+    };
+
+    micRecognition.onerror=(e)=>{
+      if(e.error==='no-speech')return;
+      if(e.error==='not-allowed'){if(autoStopTimer)clearTimeout(autoStopTimer);alert('Micro non autorisé.');stopMic();}
+    };
+
+    micRecognition.onend=()=>{
+      if(!micActive){
+        if(autoStopTimer)clearTimeout(autoStopTimer);
+        const b=document.getElementById(micActiveBtnId);
+        if(b){b.textContent='🎤 Dicter';b.classList.remove('recording');}
+        return;
+      }
+      try{setTimeout(()=>{if(micActive){try{micRecognition.start();}catch(err){stopMic();}}},200);}
+      catch(err){stopMic();}
+    };
+
+    micRecognition.start();
+  }catch(err){alert('Erreur micro.');}
+}
+
+function stopMic(){
+  micActive=false;
+  if(micRecognition){try{micRecognition.stop();}catch(e){}micRecognition=null;}
+  micFinalBuffer='';micExistingText='';micCompletedSentences='';
+  const b=document.getElementById(micActiveBtnId);
+  if(b){b.textContent='🎤 Dicter';b.classList.remove('recording');}
+}
+
+// ═══ REFORMULATEUR CNV ═══
+function updateChar(){const v=document.getElementById('msg-input').value;document.getElementById('char-count').textContent=v.length+' / 800';document.getElementById('transform-btn').disabled=v.trim().length<5;}
+function clearInput(){document.getElementById('msg-input').value='';updateChar();stopMic();}
+function useExample(el){const t=el.textContent.trim().replace(/^"|"$/g,'');document.getElementById('msg-input').value=t;updateChar();}
+
+const phases=['phase-1','phase-2','phase-3','phase-4'];
+let phaseIdx=0,phaseTimer=null;
+function startLoadingAnimation(){phases.forEach(p=>{const el=document.getElementById(p);el.classList.remove('show');el.style.display='none';});phaseIdx=0;showNextPhase();}
+function showNextPhase(){if(phaseIdx>0){const prev=document.getElementById(phases[phaseIdx-1]);prev.classList.remove('show');setTimeout(()=>prev.style.display='none',400);}if(phaseIdx<phases.length){const el=document.getElementById(phases[phaseIdx]);el.style.display='block';setTimeout(()=>el.classList.add('show'),50);phaseIdx++;phaseTimer=setTimeout(showNextPhase,1300);}}
+
+async function transformMessage(){
+  const msg=document.getElementById('msg-input').value.trim();
+  if(!msg||msg.length<5)return;
+  currentMessage=msg;stopMic();hideError();goTo('loading');startLoadingAnimation();
+  try{
+    const r=await fetch('/api/cnv',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+    if(!r.ok)throw new Error('Erreur '+r.status);
+    const result=await r.json();
+    if(result.error)throw new Error(result.error);
+    clearTimeout(phaseTimer);lastResult=result;displayResult(result);
+  }catch(err){clearTimeout(phaseTimer);showError("Une erreur s'est produite. Réessayez.");goTo('input');}
+}
+
+function switchToneTab(tone,btn){currentTone=tone;document.querySelectorAll('.rtt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(lastResult)displayCurrentTone();}
+function displayCurrentTone(){const r=lastResult[currentTone];if(!r)return;document.getElementById('step-obs').textContent=r.observation||'—';document.getElementById('step-sent').textContent=r.sentiment||'—';document.getElementById('step-need').textContent=r.besoin||'—';document.getElementById('step-req').textContent=r.demande||'—';document.getElementById('full-message-text').textContent=r.message_complet||'';}
+
+function displayResult(r){
+  document.getElementById('original-display').textContent=currentMessage;
+  document.getElementById('score-empathy').textContent=(r.score_empathie||87)+'%';
+  document.getElementById('score-clarity').textContent=(r.score_clarte||84)+'%';
+  document.getElementById('score-reduction').textContent=(r.score_reduction_violence||91)+'%';
+  currentTone='courant';
+  document.querySelectorAll('.rtt').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-courant').classList.add('active');
+  displayCurrentTone();
+  goTo('result');
+}
+
+function copyResult(){if(!lastResult||!lastResult[currentTone])return;navigator.clipboard.writeText(lastResult[currentTone].message_complet||'').then(()=>{const b=document.getElementById('copy-btn');b.textContent='✓ Copié !';setTimeout(()=>b.textContent='📋 Copier',2000);});}
+function showError(msg){document.getElementById('error-msg').textContent=msg;document.getElementById('error-box').classList.add('show');}
+function hideError(){document.getElementById('error-box').classList.remove('show');}
+
+// ═══════════════════════════════
+// VIDE TON SAC
+// ═══════════════════════════════
+function startJournal(){
+  journalCycle=1;
+  document.getElementById('journal-msg').value='';
+  updateJournalChar();
+  updateCycleDisplay();
+  goTo('journal-input');
+}
+
+function exitJournal(){
+  // Reset halo to calm if user leaves without completing
+  updateHalo('calm');
+  goTo('home');
+}
+
+function updateCycleDisplay(){
+  const el=document.getElementById('cycle-display');
+  if(journalCycle>1){
+    el.innerHTML=`<div class="cycle-badge">Cycle ${journalCycle}</div>`;
+  }else{
+    el.innerHTML='';
+  }
+}
+
+function updateJournalChar(){
+  const v=document.getElementById('journal-msg').value;
+  document.getElementById('journal-char').textContent=v.length+' / 2000';
+  document.getElementById('journal-send-btn').disabled=v.trim().length<5;
+}
+
+function clearJournal(){
+  document.getElementById('journal-msg').value='';
+  updateJournalChar();
+  stopMic();
+}
+
+function showJournalError(msg){document.getElementById('journal-error-msg').textContent=msg;document.getElementById('journal-error').classList.add('show');}
+function hideJournalError(){document.getElementById('journal-error').classList.remove('show');}
+
+async function sendJournal(){
+  const msg=document.getElementById('journal-msg').value.trim();
+  if(!msg||msg.length<5)return;
+  stopMic();hideJournalError();
+  goTo('loading');startLoadingAnimation();
+
+  try{
+    const r=await fetch('/api/journal',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,cycle:journalCycle})});
+    if(!r.ok)throw new Error('Erreur '+r.status);
+    const result=await r.json();
+    if(result.error)throw new Error(result.error);
+    clearTimeout(phaseTimer);
+
+    // URGENCY first
+    if(result.urgency&&result.urgency!=='aucune'){
+      showUrgencyScreen(result.urgency);
+      return;
+    }
+
+    // Update halo with detected emotion
+    journalLastEmotion=result.emotional_state||'neutral';
+    updateHalo(journalLastEmotion);
+
+    // Display response
+    journalLastResponse=result;
+    displayJournalResponse(result);
+  }catch(err){
+    clearTimeout(phaseTimer);
+    showJournalError("Une erreur s'est produite. Réessayez.");
+    goTo('journal-input');
+  }
+}
+
+function displayJournalResponse(r){
+  document.getElementById('jr-reformulation').textContent=r.response.reformulation||'—';
+  document.getElementById('jr-question').textContent=r.response.question||'—';
+  document.getElementById('jr-perspective').textContent=r.response.perspective||'—';
+
+  // Reset path to breathing
+  currentJourPath='breathing';
+  jourPathIdx=0;
+  document.querySelectorAll('.jr-path-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('jp-breathing').classList.add('active');
+  refreshJourPath();
+
+  goTo('journal-response');
+}
+
+function switchJourPath(path,btn){
+  currentJourPath=path;
+  document.querySelectorAll('.jr-path-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  jourPathIdx=0;
+  refreshJourPath();
+}
+
+async function refreshJourPath(){
+  const labels={breathing:'Exercice de respiration',move:'Exercice de mouvement',write:'Écriture libératrice',quote:'Sagesse du jour',act:'Micro-action concrète'};
+  document.getElementById('jp-cat-label').textContent=labels[currentJourPath];
+
+  // Cache UI elements - reset state
+  document.getElementById('jp-write-zone').style.display='none';
+  document.getElementById('jp-write-confirm').style.display='none';
+  document.getElementById('jp-next-btn').style.display='block';
+
+  if(currentJourPath==='write'){
+    // ÉCRITURE LIBÉRATRICE
+    document.getElementById('jp-author').style.display='none';
+    document.getElementById('jp-counter').textContent='✍️';
+    const prompt=journalLastResponse.writing_prompt||'Écrivez librement ce qui vous traverse — les mots qui ne trouvent pas de destinataire trouvent souvent leur sens en eux-mêmes.';
+    document.getElementById('jp-text').textContent='« '+prompt+' »';
+    document.getElementById('jp-action').style.display='none';
+    document.getElementById('jp-write-zone').style.display='block';
+    document.getElementById('jp-next-btn').style.display='none';
+    return;
+  }
+
+  if(currentJourPath==='act'){
+    // MICRO-ACTIONS CONCRÈTES
+    const actions=journalLastResponse.micro_actions||[];
+    if(actions.length===0){
+      document.getElementById('jp-text').textContent='Faites une chose simple maintenant qui vous fait du bien.';
+      document.getElementById('jp-counter').textContent='—';
+    }else{
+      const item=actions[jourPathIdx%actions.length];
+      document.getElementById('jp-counter').textContent=`${(jourPathIdx%actions.length)+1} / ${actions.length}`;
+      document.getElementById('jp-text').textContent='✦ '+item;
+    }
+    document.getElementById('jp-author').style.display='none';
+    document.getElementById('jp-action').textContent='→ Faites-le maintenant, dans la vraie vie. Pas demain.';
+    document.getElementById('jp-action').style.display='block';
+    return;
+  }
+
+  if(currentJourPath==='quote'){
+    document.getElementById('jp-text').textContent='';
+    document.getElementById('jp-author').style.display='none';
+    document.getElementById('jp-action').style.display='none';
+    document.getElementById('jp-counter').textContent='...';
+
+    if(!dailyJourQuotes[journalLastEmotion]){
+      document.getElementById('jp-text').innerHTML='<div class="jr-path-loading">✨ Génération des sagesses du jour...</div>';
+      try{
+        const today=new Date().toISOString().split('T')[0];
+        const r=await fetch('/api/quotes',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({emotion:journalLastEmotion,date:today})});
+        if(r.ok){
+          const data=await r.json();
+          if(data.quotes&&Array.isArray(data.quotes))dailyJourQuotes[journalLastEmotion]=data.quotes;
+        }
+      }catch(e){}
+      if(!dailyJourQuotes[journalLastEmotion])dailyJourQuotes[journalLastEmotion]=getFallbackQuotes(journalLastEmotion);
+    }
+
+    const quotes=dailyJourQuotes[journalLastEmotion];
+    const item=quotes[jourPathIdx%quotes.length];
+    document.getElementById('jp-counter').textContent=`${(jourPathIdx%quotes.length)+1} / ${quotes.length}`;
+    document.getElementById('jp-text').textContent='« '+item.text+' »';
+    document.getElementById('jp-author').textContent='— '+item.author;
+    document.getElementById('jp-author').style.display='block';
+    document.getElementById('jp-action').style.display='none';
+    return;
+  }
+
+  // RESPIRATION ou MOUVEMENT (statique)
+  const list=wellnessLib[journalLastEmotion][currentJourPath];
+  const item=list[jourPathIdx%list.length];
+  document.getElementById('jp-counter').textContent=`${(jourPathIdx%list.length)+1} / ${list.length}`;
+  document.getElementById('jp-text').textContent=item.content;
+  document.getElementById('jp-author').style.display='none';
+  document.getElementById('jp-action').textContent='→ '+item.action;
+  document.getElementById('jp-action').style.display='block';
+}
+
+function closeWriting(){
+  document.getElementById('jp-write-zone').style.display='none';
+  document.getElementById('jp-write-confirm').style.display='block';
+  document.getElementById('jp-write-textarea').value='';
+  setTimeout(()=>{document.getElementById('jp-write-confirm').style.display='none';},5000);
+}
+
+function nextPathProposal(){jourPathIdx++;refreshJourPath();}
+
+function getFallbackQuotes(emotion){
+  const fallback={
+    stress:[{text:'La tempête extérieure ne peut atteindre que celui qui n\'a pas trouvé son centre.',author:'Sagesse contemporaine'},{text:'Respirer, c\'est se rappeler qu\'on est en vie.',author:'Élise Bernard'},{text:'Le stress est un signal, pas une prison.',author:'Marc Lefèvre'}],
+    neutral:[{text:'Le banal devient sacré quand on le regarde avec attention.',author:'Camille Roux'},{text:'L\'éveil n\'est pas une montagne. C\'est un regard.',author:'Antoine Bréhier'},{text:'Aujourd\'hui est un jour parfait pour devenir un peu plus soi-même.',author:'Léa Mounier'}],
+    calm:[{text:'La sérénité est un trésor que personne ne peut vous voler.',author:'Hugo Lemoine'},{text:'Quand l\'eau est calme, elle reflète le ciel.',author:'Sagesse zen'},{text:'Le silence est plein de réponses qu\'on n\'écoute pas.',author:'Manon Rivière'}]
+  };
+  return fallback[emotion]||fallback.calm;
+}
+
+// AUTO-EVALUATION
+function evalJournal(userEmotion){
+  // Met à jour le halo avec le ressenti utilisateur (priorité sur la détection IA)
+  updateHalo(userEmotion);
+
+  const conclusions=journalLastResponse.conclusions||{};
+  const messages={
+    stress:conclusions.stress_message||'C\'est ok que la tension soit encore là. Voulez-vous exprimer ce qui reste ?',
+    neutral:conclusions.neutral_message||'Vous avez fait un beau chemin. Honorez ce moment.',
+    calm:conclusions.calm_message||'Quelle belle sérénité. Portez-la avec vous.'
+  };
+  const celebrations={stress:'💗',neutral:'🌅',calm:'🌿✨🌿'};
+
+  document.getElementById('je-celebration').textContent=celebrations[userEmotion];
+  document.getElementById('je-conclusion').textContent=messages[userEmotion];
+
+  // Boutons selon état
+  const helpEl=document.getElementById('je-pro-help-container');
+  const btnSecondary=document.getElementById('je-btn-secondary');
+
+  if(userEmotion==='stress'){
+    btnSecondary.style.display='block';
+    btnSecondary.textContent='Exprimer encore ce qui reste';
+
+    // Si cycle 3+, suggérer aide pro
+    if(journalCycle>=3){
+      helpEl.innerHTML=`
+        <div class="je-pro-help">
+          <div class="je-pro-label">🤝 Et si parler à un humain ?</div>
+          <div class="je-pro-text">Il y a des moments où parler à un humain qualifié fait une différence qu'aucune IA ne peut apporter. Voici quelques pistes bienveillantes :</div>
+          <div class="je-pro-list">
+            <a class="je-pro-item" href="tel:0972394050"><div class="je-pro-icon">💬</div><div class="je-pro-name">SOS Amitié<br><span style="font-size:11px;color:var(--muted);">Écoute anonyme 24h/24</span></div><div class="je-pro-call">09 72 39 40 50</div></a>
+            <div class="je-pro-item"><div class="je-pro-icon">🩺</div><div class="je-pro-name">Votre médecin traitant<br><span style="font-size:11px;color:var(--muted);">Pour orientation vers psy si besoin</span></div></div>
+            <div class="je-pro-item"><div class="je-pro-icon">🧠</div><div class="je-pro-name">Psychologue<br><span style="font-size:11px;color:var(--muted);">Annuaire : annuaire-psychologues.fr</span></div></div>
+          </div>
+        </div>`;
+    }else{
+      helpEl.innerHTML='';
+    }
+  }else{
+    btnSecondary.style.display='none';
+    helpEl.innerHTML='';
+  }
+
+  goTo('journal-end');
+}
+
+function restartJournalCycle(){
+  journalCycle++;
+  document.getElementById('journal-msg').value='';
+  updateJournalChar();
+  updateCycleDisplay();
+  goTo('journal-input');
+}
+
+function finishJournal(){
+  // Reset complet
+  journalCycle=1;
+  journalLastResponse=null;
+  // Garde le halo sur l'état final ressenti (validation utilisateur)
+  goTo('home');
+}
+
+// ═══ URGENCY SCREEN ═══
+function showUrgencyScreen(urgencyType){
+  const data=urgencyData[urgencyType];
+  if(!data){goTo('home');return;}
+
+  document.getElementById('urg-title').textContent=data.title;
+  document.getElementById('urg-sub').textContent=data.sub;
+
+  const numbersHtml=data.numbers.map(n=>{
+    return `<a class="urg-number" href="tel:${n.call}">
+      <div class="urg-num-icon">📞</div>
+      <div class="urg-num-info">
+        <div class="urg-num-name">${n.name}</div>
+        <div class="urg-num-desc">${n.desc}</div>
+      </div>
+      <div class="urg-num-call">${n.call}</div>
+    </a>`;
+  }).join('');
+  document.getElementById('urg-numbers').innerHTML=numbersHtml;
+  document.getElementById('urg-script').textContent=data.script;
+
+  goTo('urgency');
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded',()=>{updateChar();});
+</script>
+</body>
+</html>
