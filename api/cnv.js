@@ -58,9 +58,7 @@ Message à transformer : "${message.trim()}"`;
       })
     });
 
-    if (!response.ok) {
-      return res.status(500).json({ error: 'Erreur IA — réessayez' });
-    }
+    if (!response.ok) return res.status(500).json({ error: 'Erreur IA — réessayez' });
 
     const data = await response.json();
     const text = data.content?.[0]?.text || '';
@@ -73,7 +71,6 @@ Message à transformer : "${message.trim()}"`;
       if (match) result = JSON.parse(match[0]);
       else throw new Error('JSON invalide');
     }
-
     return res.status(200).json(result);
   } catch (err) {
     return res.status(500).json({ error: 'Erreur serveur — réessayez' });
