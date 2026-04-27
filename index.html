@@ -28,7 +28,7 @@ header{padding:18px 20px 14px;display:flex;align-items:center;justify-content:sp
 .logo-symbol{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:white;font-weight:600;box-shadow:0 4px 12px rgba(58,138,122,0.3);}
 .logo-name{font-family:'Playfair Display',serif;font-size:19px;color:var(--teal2);font-weight:600;line-height:1;}
 .logo-tag{font-size:9px;color:var(--muted);line-height:1.3;max-width:130px;}
-.halo-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--white);border:1px solid var(--border);font-size:11px;color:var(--ink2);font-family:'DM Sans',sans-serif;}
+.halo-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:var(--white);border:1px solid var(--border);font-size:11px;color:var(--ink2);cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;font-family:'DM Sans',sans-serif;}
 .halo-dot{width:10px;height:10px;border-radius:50%;background:#50b478;transition:background 0.5s;animation:hp 2.5s ease infinite;}
 @keyframes hp{0%,100%{box-shadow:0 0 0 0 rgba(80,180,120,0.4);}50%{box-shadow:0 0 0 6px rgba(80,180,120,0);}}
 
@@ -198,97 +198,6 @@ textarea::placeholder{color:#b0c8c0;}
 
 .next-btn{width:100%;padding:12px;background:var(--white);border:1.5px solid var(--teal);color:var(--teal2);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
 .daily-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;color:var(--gold);background:rgba(196,154,44,0.1);padding:2px 8px;border-radius:10px;margin-left:6px;}
-
-/* SELF-EVALUATION BLOCK */
-.self-eval{margin-top:32px;animation:stp 0.6s ease 0.8s both;}
-.se-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin-bottom:24px;}
-.se-header{display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;}
-.se-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
-.se-kicker{font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:2px;}
-.se-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--ink);line-height:1.2;}
-.se-title em{font-style:italic;color:var(--teal2);}
-.se-sub{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;font-style:italic;}
-.se-buttons{display:flex;gap:8px;margin-bottom:14px;}
-.se-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 6px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);cursor:pointer;font-family:'DM Sans',sans-serif;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all 0.2s;}
-.se-btn:hover{transform:translateY(-2px);}
-.se-btn.selected{transform:scale(1.03);box-shadow:0 6px 20px rgba(0,0,0,0.08);}
-.se-btn.stress.selected{border-color:#e05a5a;background:rgba(224,90,90,0.08);}
-.se-btn.neutral.selected{border-color:var(--gold);background:rgba(196,154,44,0.08);}
-.se-btn.calm.selected{border-color:var(--teal);background:var(--teal-light);}
-.se-emoji{font-size:24px;}
-.se-label{font-size:11px;color:var(--ink2);font-weight:500;}
-.se-btn.stress.selected .se-label{color:#c04040;}
-.se-btn.neutral.selected .se-label{color:#a07020;}
-.se-btn.calm.selected .se-label{color:var(--teal2);font-weight:600;}
-
-.se-response{display:none;padding:18px;border-radius:var(--r);border:1px solid var(--border);margin-top:6px;animation:stp 0.5s ease both;}
-.se-response.show{display:block;}
-.se-response.stress{background:rgba(224,90,90,0.06);border-color:rgba(224,90,90,0.2);}
-.se-response.neutral{background:rgba(196,154,44,0.06);border-color:rgba(196,154,44,0.2);}
-.se-response.calm{background:linear-gradient(135deg,var(--teal-light),#f0f8f5);border-color:var(--border2);}
-.ser-message{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink2);line-height:1.7;font-style:italic;margin-bottom:14px;}
-.ser-actions{display:flex;gap:8px;flex-wrap:wrap;}
-.ser-action{flex:1;min-width:90px;padding:10px 12px;border-radius:50px;border:1.5px solid var(--teal);background:var(--white);color:var(--teal2);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-.ser-action:hover{background:var(--teal-light);}
-.ser-celebration{font-size:32px;text-align:center;margin:8px 0;animation:celebrate 1s ease;}
-@keyframes celebrate{0%{transform:scale(0.5);opacity:0;}50%{transform:scale(1.3);}100%{transform:scale(1);opacity:1;}}
-
-/* ═══ URGENCY SCREEN ═══ */
-#urgency{padding-top:24px;}
-.urg-container{max-width:100%;}
-.urg-header{text-align:center;margin-bottom:24px;}
-.urg-icon-wrap{display:flex;justify-content:center;margin-bottom:14px;}
-.urg-icon{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal2));display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:0 8px 24px rgba(58,138,122,0.3);}
-.urg-kicker{font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;font-weight:600;}
-.urg-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--ink);line-height:1.25;margin-bottom:12px;}
-.urg-sub{font-size:14px;color:var(--ink2);line-height:1.7;}
-
-.urg-numbers{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
-.urg-number{background:var(--white);border:2px solid var(--teal);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all 0.2s;cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;text-align:left;}
-.urg-number:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(58,138,122,0.15);}
-.urg-num-icon{width:44px;height:44px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
-.urg-num-info{flex:1;}
-.urg-num-name{font-size:15px;font-weight:600;color:var(--ink);}
-.urg-num-desc{font-size:12px;color:var(--muted);line-height:1.4;margin-top:2px;}
-.urg-num-call{font-family:'Playfair Display',serif;font-size:22px;color:var(--teal2);font-weight:600;flex-shrink:0;}
-.urg-num-tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:8px;background:var(--teal-light);color:var(--teal2);letter-spacing:0.05em;text-transform:uppercase;margin-top:4px;font-weight:500;}
-
-.urg-script-block{background:var(--teal-light);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:18px;}
-.urg-script-label{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;font-weight:600;}
-.urg-script{font-family:'Playfair Display',serif;font-size:15px;color:var(--ink2);line-height:1.7;font-style:italic;padding:14px;background:var(--white);border-radius:var(--r-sm);border-left:3px solid var(--teal);}
-
-.urg-what{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:18px;box-shadow:var(--shadow);}
-.urg-what-label{font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-weight:600;}
-.urg-what-list{display:flex;flex-direction:column;gap:8px;}
-.urg-what-item{display:flex;gap:10px;font-size:13px;color:var(--ink2);line-height:1.6;}
-.urg-what-num{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--teal-light);color:var(--teal2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;margin-top:1px;}
-
-.urg-geo{margin-bottom:20px;}
-.urg-geo-btn{width:100%;padding:14px;background:var(--white);border:1.5px solid var(--teal);color:var(--teal2);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-.urg-geo-result{margin-top:10px;padding:12px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-sm);font-size:13px;color:var(--ink2);line-height:1.5;display:none;}
-.urg-geo-result.show{display:block;}
-.urg-geo-link{display:block;color:var(--teal2);text-decoration:underline;margin-top:6px;}
-
-.urg-footer{text-align:center;padding-top:8px;border-top:1px solid var(--border);}
-.urg-back{padding:10px 20px;background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:50px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;margin-top:14px;margin-bottom:12px;}
-.urg-confid{font-size:11px;color:var(--muted);font-style:italic;line-height:1.5;}
-
-/* AI-DETECTED EMOTION BANNER */
-.emotion-detected{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--r);margin-bottom:16px;border:1.5px solid;animation:stp 0.5s ease 0.05s both;position:relative;overflow:hidden;}
-.emotion-detected.stress{background:rgba(224,90,90,0.08);border-color:rgba(224,90,90,0.3);}
-.emotion-detected.neutral{background:rgba(196,154,44,0.08);border-color:rgba(196,154,44,0.3);}
-.emotion-detected.calm{background:var(--teal-light);border-color:var(--border2);}
-.ed-icon{font-size:24px;flex-shrink:0;}
-.ed-content{flex:1;}
-.ed-label{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
-.ed-value{font-family:'Playfair Display',serif;font-size:16px;font-style:italic;}
-.emotion-detected.stress .ed-value{color:#c04040;}
-.emotion-detected.neutral .ed-value{color:#a07020;}
-.emotion-detected.calm .ed-value{color:var(--teal2);}
-.ed-pulse{width:8px;height:8px;border-radius:50%;flex-shrink:0;animation:hp 2s ease infinite;}
-.emotion-detected.stress .ed-pulse{background:#e05a5a;}
-.emotion-detected.neutral .ed-pulse{background:#d4a020;}
-.emotion-detected.calm .ed-pulse{background:#50b478;}
 </style>
 </head>
 <body>
@@ -304,10 +213,10 @@ textarea::placeholder{color:#b0c8c0;}
         <div class="logo-tag">Communication & gestion des émotions</div>
       </div>
     </div>
-    <div class="halo-btn" id="halo-btn">
+    <button class="halo-btn" type="button" onclick="openWellness()">
       <div class="halo-dot" id="halo-dot"></div>
       <span id="halo-label">Calme</span>
-    </div>
+    </button>
   </header>
 
   <div id="home" class="screen active">
@@ -316,7 +225,12 @@ textarea::placeholder{color:#b0c8c0;}
       <div class="eb-content">
         <div class="eb-label">Votre état émotionnel</div>
         <div class="eb-state" id="home-state">🌿 <em>Calme & centré</em></div>
-        <div class="eb-message" id="home-message">Bienvenue sur Kairos. Choisissez un module pour commencer.</div>
+        <div class="eb-message" id="home-message">Vous êtes serein. Voici de quoi cultiver et amplifier cet état.</div>
+        <div class="eb-actions">
+          <button class="eb-action" type="button" onclick="openWellness('breathing')">🧘 Respiration</button>
+          <button class="eb-action" type="button" onclick="openWellness('quote')">💭 Sagesse</button>
+          <button class="eb-action" type="button" onclick="openWellness('move')">🏃 Bouger</button>
+        </div>
       </div>
     </div>
 
@@ -384,51 +298,6 @@ textarea::placeholder{color:#b0c8c0;}
     <div class="input-mvp">🔒 Votre message est traité puis immédiatement supprimé — rien n'est conservé.</div>
   </div>
 
-  <!-- ═══ URGENCY PROTECTION SCREEN ═══ -->
-  <div id="urgency" class="screen">
-    <div class="urg-container">
-      <div class="urg-header">
-        <div class="urg-icon-wrap">
-          <div class="urg-icon">🤝</div>
-        </div>
-        <div class="urg-kicker">Vous n'êtes pas seul(e)</div>
-        <h2 class="urg-title" id="urg-title">Une situation grave mérite un vrai soutien</h2>
-        <p class="urg-sub" id="urg-sub">Ce que vous traversez nécessite une aide professionnelle immédiate. Kairos n'est pas qualifiée pour vous accompagner seule sur ce chemin — mais des professionnels formés sont disponibles maintenant, gratuitement, et de façon confidentielle.</p>
-      </div>
-
-      <!-- Numéros d'urgence -->
-      <div class="urg-numbers" id="urg-numbers">
-        <!-- Rempli dynamiquement -->
-      </div>
-
-      <!-- Aide pour parler -->
-      <div class="urg-script-block">
-        <div class="urg-script-label">💬 Si vous ne savez pas par où commencer</div>
-        <div class="urg-script" id="urg-script"></div>
-      </div>
-
-      <!-- Ce que va faire la personne au téléphone -->
-      <div class="urg-what">
-        <div class="urg-what-label">Ce qui va se passer</div>
-        <div class="urg-what-list" id="urg-what-list"></div>
-      </div>
-
-      <!-- Géolocalisation -->
-      <div class="urg-geo">
-        <button class="urg-geo-btn" type="button" onclick="findNearby()">
-          📍 Trouver les services près de moi
-        </button>
-        <div class="urg-geo-result" id="urg-geo-result"></div>
-      </div>
-
-      <!-- Boutons retour discret -->
-      <div class="urg-footer">
-        <button class="urg-back" type="button" onclick="goTo('home')">Revenir à l'accueil</button>
-        <p class="urg-confid">🔒 Aucune trace de cet échange n'est conservée. Votre vie privée est protégée.</p>
-      </div>
-    </div>
-  </div>
-
   <div id="loading" class="screen">
     <div class="loading-ring"><div class="loading-symbol">K</div></div>
     <div id="phase-1" class="loading-phase">Analyse du message...</div>
@@ -441,15 +310,6 @@ textarea::placeholder{color:#b0c8c0;}
   <div id="result" class="screen">
     <div class="result-kicker"><div class="result-check">✓</div>Message transformé</div>
     <h2 class="result-title">Votre message en <em>communication non-violente</em></h2>
-
-    <div class="emotion-detected" id="emotion-detected">
-      <span class="ed-icon" id="ed-icon">🌿</span>
-      <div class="ed-content">
-        <div class="ed-label">État émotionnel détecté</div>
-        <div class="ed-value" id="ed-value">Calme & centré</div>
-      </div>
-      <span class="ed-pulse"></span>
-    </div>
 
     <div class="result-tone-tabs">
       <button class="rtt active" type="button" id="tab-courant" onclick="switchToneTab('courant',this)">🤝 Registre courant</button>
@@ -484,44 +344,12 @@ textarea::placeholder{color:#b0c8c0;}
       <button class="btn-copy" type="button" id="copy-btn" onclick="copyResult()">📋 Copier</button>
       <button class="btn-again" type="button" onclick="goTo('input')">Nouveau ↻</button>
     </div>
-
-    <!-- AUTO-ÉVALUATION POST-OUTIL -->
-    <div class="self-eval" id="self-eval">
-      <div class="se-divider"></div>
-      <div class="se-header">
-        <div class="se-icon">✨</div>
-        <div>
-          <div class="se-kicker">Pause introspection</div>
-          <div class="se-title">Et maintenant, <em>comment vous sentez-vous ?</em></div>
-        </div>
-      </div>
-      <p class="se-sub">Prenez un instant pour vous écouter. Le simple fait de nommer votre état est déjà un acte de conscience.</p>
-      <div class="se-buttons">
-        <button class="se-btn stress" type="button" onclick="selfEvaluate('stress')">
-          <span class="se-emoji">😤</span>
-          <span class="se-label">Encore tendu</span>
-        </button>
-        <button class="se-btn neutral" type="button" onclick="selfEvaluate('neutral')">
-          <span class="se-emoji">😐</span>
-          <span class="se-label">Apaisé</span>
-        </button>
-        <button class="se-btn calm" type="button" onclick="selfEvaluate('calm')">
-          <span class="se-emoji">🌿</span>
-          <span class="se-label">Serein</span>
-        </button>
-      </div>
-
-      <!-- Réponse personnalisée selon l'auto-éval -->
-      <div class="se-response" id="se-response">
-        <div class="ser-message" id="ser-message"></div>
-        <div class="ser-actions" id="ser-actions"></div>
-      </div>
-    </div>
   </div>
 
   <nav class="bottom-nav">
     <button class="nav-item active" type="button" onclick="switchNav(this,'home')"><span class="nav-icon">🏠</span><span class="nav-label">Accueil</span></button>
     <button class="nav-item" type="button" onclick="switchNav(this,'input')"><span class="nav-icon">🕊️</span><span class="nav-label">Reformuler</span></button>
+    <button class="nav-item" type="button" onclick="openWellness()"><span class="nav-icon">🧘</span><span class="nav-label">Bien-être</span></button>
     <button class="nav-item" type="button"><span class="nav-icon">👤</span><span class="nav-label">Profil</span></button>
   </nav>
 </div>
@@ -830,118 +658,34 @@ function startMic(SR) {
   }
 }
 
-// Buffer pour accumuler le texte final (évite les pertes et répétitions)
-let micFinalBuffer = '';
-let micExistingText = '';
-let micCompletedSentences = '';
-
 function actuallyStartMic(SR) {
   try {
     micRecognition = new SR();
     micRecognition.lang = 'fr-FR';
     micRecognition.continuous = true;
-    micRecognition.interimResults = false;
-    micRecognition.maxAlternatives = 1;
-
-    // Sauvegarde le texte déjà présent
-    micExistingText = document.getElementById('msg-input').value.trim();
-    if(micExistingText.length > 0 && !micExistingText.endsWith(' ')) {
-      micExistingText += ' ';
-    }
-    micFinalBuffer = '';
-    micCompletedSentences = '';
-
-    // Timer d'arrêt automatique après silence prolongé suivant la parole
-    let autoStopTimer = null;
-    const SILENCE_AFTER_SPEAKING_MS = 3000; // 3 secondes après la dernière parole
-    let hasSpoken = false; // l'utilisateur a-t-il déjà parlé une fois ?
-
-    function scheduleAutoStop() {
-      if(autoStopTimer) clearTimeout(autoStopTimer);
-      autoStopTimer = setTimeout(() => {
-        if(micActive && hasSpoken) {
-          // Archive la dernière phrase
-          if(micFinalBuffer.trim().length > 0) {
-            micCompletedSentences += micFinalBuffer + '. ';
-            micFinalBuffer = '';
-          }
-          stopMic();
-        }
-      }, SILENCE_AFTER_SPEAKING_MS);
-    }
-
+    micRecognition.interimResults = true;
     micRecognition.onstart = () => {
       micActive = true;
       const b = document.getElementById('mic-btn');
       b.textContent = '⏹ Stop';
       b.classList.add('recording');
     };
-
     micRecognition.onresult = (ev) => {
-      // L'utilisateur parle → marque qu'il a parlé + (re)démarre le timer
-      hasSpoken = true;
-
-      const lastResult = ev.results[ev.results.length - 1];
-      if(lastResult && lastResult.isFinal) {
-        let cleaned = lastResult[0].transcript.trim();
-        if(cleaned.length > 0) {
-          const fullPrefix = micExistingText + micCompletedSentences;
-          if(fullPrefix.trim() === '') {
-            cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-          } else {
-            const lastChar = fullPrefix.trim().slice(-1);
-            if(['.','!','?'].includes(lastChar)) {
-              cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
-            }
-          }
-          micFinalBuffer = cleaned;
-          const fullText = (micExistingText + micCompletedSentences + micFinalBuffer).replace(/\s+/g, ' ').trim();
-          document.getElementById('msg-input').value = fullText;
-          updateChar();
-        }
-        // À chaque phrase finalisée, on démarre le timer de 3s de silence
-        scheduleAutoStop();
+      let finalText = '', interimText = '';
+      for(let i = 0; i < ev.results.length; i++) {
+        if(ev.results[i].isFinal) finalText += ev.results[i][0].transcript + ' ';
+        else interimText += ev.results[i][0].transcript;
       }
+      document.getElementById('msg-input').value = (finalText + interimText).trim();
+      updateChar();
     };
-
     micRecognition.onerror = (e) => {
-      console.log('Mic error:', e.error);
-      if(e.error === 'no-speech') return;
-      if(e.error === 'not-allowed') {
-        if(autoStopTimer) clearTimeout(autoStopTimer);
-        alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
-        stopMic();
-        return;
-      }
+      stopMic();
+      if(e.error === 'not-allowed') alert('Micro non autorisé. Activez-le dans les paramètres du navigateur.');
     };
-
-    micRecognition.onend = () => {
-      if(!micActive) {
-        if(autoStopTimer) clearTimeout(autoStopTimer);
-        const b = document.getElementById('mic-btn');
-        if(b) {
-          b.textContent = '🎤 Dicter';
-          b.classList.remove('recording');
-        }
-        return;
-      }
-
-      // Relance pour permettre de continuer (le timer auto-stop tourne en parallèle)
-      try {
-        setTimeout(() => {
-          if(micActive) {
-            try { micRecognition.start(); }
-            catch(err) { stopMic(); }
-          }
-        }, 200);
-      } catch(err) {
-        stopMic();
-      }
-    };
-
+    micRecognition.onend = () => stopMic();
     micRecognition.start();
   } catch(err) {
-    console.error('Mic start error:', err);
     alert('Erreur de démarrage du micro. Réessayez.');
   }
 }
@@ -952,9 +696,6 @@ function stopMic() {
     try { micRecognition.stop(); } catch(e){}
     micRecognition = null;
   }
-  micFinalBuffer = '';
-  micExistingText = '';
-  micCompletedSentences = '';
   const b = document.getElementById('mic-btn');
   if(b) {
     b.textContent = '🎤 Dicter';
@@ -1028,210 +769,15 @@ async function transformMessage() {
 }
 
 function displayResult(r) {
-  // ⚠️ DÉTECTION D'URGENCE — PRIORITÉ ABSOLUE
-  if(r.urgency && r.urgency !== 'aucune') {
-    showUrgencyScreen(r.urgency);
-    return;
-  }
-
   document.getElementById('original-display').textContent = currentMessage;
   document.getElementById('score-empathy').textContent = (r.score_empathie || 87) + '%';
   document.getElementById('score-clarity').textContent = (r.score_clarte || 84) + '%';
   document.getElementById('score-reduction').textContent = (r.score_reduction_violence || 91) + '%';
-
-  // ✨ DÉTECTION ÉMOTIONNELLE AUTOMATIQUE par l'IA
-  if(r.emotional_state && ['stress','neutral','calm'].includes(r.emotional_state)) {
-    currentEmotion = r.emotional_state;
-    updateHalo(r.emotional_state);
-    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
-    const btn = document.querySelector(`.emotion-btn[data-emotion="${r.emotional_state}"]`);
-    if(btn) btn.classList.add('selected');
-
-    const banner = document.getElementById('emotion-detected');
-    banner.classList.remove('stress','neutral','calm');
-    banner.classList.add(r.emotional_state);
-
-    const emotionDisplay = {
-      stress: { icon: '😤', value: 'Tension détectée' },
-      neutral: { icon: '😐', value: 'État neutre' },
-      calm: { icon: '🌿', value: 'Calme & centré' }
-    };
-    const info = emotionDisplay[r.emotional_state];
-    document.getElementById('ed-icon').textContent = info.icon;
-    document.getElementById('ed-value').textContent = info.value;
-  }
-
   currentTone = 'courant';
   document.querySelectorAll('.rtt').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-courant').classList.add('active');
   displayCurrentTone();
   goTo('result');
-}
-
-// ─── DÉTECTION D'URGENCE — RESSOURCES OFFICIELLES FRANÇAISES ──────
-const urgencyData = {
-  suicide: {
-    title: "Votre vie compte. Parlons-en avec quelqu'un de qualifié.",
-    sub: "Ce que vous traversez en ce moment est immense. Des professionnels formés à la prévention du suicide sont disponibles 24h/24, gratuitement et de façon strictement confidentielle. Vous n'avez pas à porter ça seul(e).",
-    numbers: [
-      { name: "3114 — Numéro national de prévention du suicide", desc: "Appel gratuit · 24h/24 · 7j/7 · Professionnels formés", call: "3114", tag: "Prioritaire" },
-      { name: "SOS Amitié", desc: "Écoute anonyme et confidentielle", call: "09 72 39 40 50", tag: "Écoute" },
-      { name: "15 — SAMU", desc: "En cas de geste imminent ou de mise en danger", call: "15", tag: "Urgence vitale" }
-    ],
-    script: "« Bonjour, je m'appelle [votre prénom]. Je traverse un moment très difficile. J'ai des pensées qui me font peur. J'avais besoin d'en parler à quelqu'un. »",
-    what: [
-      "La personne au téléphone est formée à l'écoute. Elle ne vous jugera pas.",
-      "Vous pouvez parler ou juste écouter — comme vous voulez.",
-      "L'appel est gratuit, anonyme, et confidentiel.",
-      "Vous pouvez raccrocher et rappeler quand vous voulez."
-    ]
-  },
-  violence_conjugale: {
-    title: "Vous avez le droit de vivre en sécurité.",
-    sub: "Ce que vous subissez n'est jamais de votre faute. Des associations spécialisées peuvent vous aider à vous protéger, à comprendre vos droits et à organiser votre sécurité — à votre rythme.",
-    numbers: [
-      { name: "3919 — Violences Femmes Info", desc: "Anonyme · Gratuit · 24h/24 · N'apparaît pas sur les factures", call: "3919", tag: "Prioritaire" },
-      { name: "17 — Police Secours", desc: "En cas de danger immédiat", call: "17", tag: "Urgence" },
-      { name: "Arrêtons Les Violences", desc: "Site officiel avec aide en ligne 24h/24", call: "arretonslesviolences.gouv.fr", tag: "Tchat" }
-    ],
-    script: "« Bonjour, j'ai besoin d'aide. Je vis des violences chez moi. Je voudrais comprendre ce que je peux faire et quelles sont mes options. »",
-    what: [
-      "L'écoute est anonyme et n'apparaîtra pas sur vos factures téléphoniques.",
-      "On vous expliquera vos droits sans jamais vous forcer à porter plainte.",
-      "On vous orientera vers une association locale qui peut vous accompagner.",
-      "Si vous êtes en danger immédiat, n'hésitez pas à composer le 17."
-    ]
-  },
-  viol: {
-    title: "Ce que vous avez vécu est un crime. Vous serez crue / cru.",
-    sub: "Une agression sexuelle nécessite une prise en charge médicale ET juridique rapide pour préserver vos droits et votre santé. Des professionnels formés sont là pour vous accompagner sans jugement.",
-    numbers: [
-      { name: "Viols Femmes Informations", desc: "0 800 05 95 95 · Gratuit · Anonyme · Lun-Ven 10h-19h", call: "0800059595", tag: "Prioritaire" },
-      { name: "3919 — Violences Femmes Info", desc: "24h/24 · Anonyme · Toutes violences", call: "3919", tag: "24h/24" },
-      { name: "17 — Police Secours", desc: "Pour porter plainte ou en cas de danger", call: "17", tag: "Urgence" }
-    ],
-    script: "« Bonjour, j'ai été victime d'une agression sexuelle. J'aurais besoin d'être conseillé(e) sur les démarches médicales et juridiques. »",
-    what: [
-      "🏥 Allez aux urgences ou dans une UMJ (Unité Médico-Judiciaire) — idéalement dans les 72h pour les preuves.",
-      "Vous n'êtes pas obligé(e) de porter plainte tout de suite — un examen peut être conservé.",
-      "Une plainte peut être déposée plusieurs années après les faits.",
-      "Une association comme le CIDFF peut vous accompagner pendant toute la procédure."
-    ]
-  },
-  harcelement_grave: {
-    title: "Le harcèlement n'est pas une fatalité. Vous avez des droits.",
-    sub: "Le harcèlement, qu'il soit scolaire, professionnel ou en ligne, est puni par la loi française. Des professionnels peuvent vous aider à constituer un dossier et à mettre fin à cette situation.",
-    numbers: [
-      { name: "3018 — Harcèlement (numérique, scolaire, sexuel)", desc: "Gratuit · Anonyme · Confidentiel", call: "3018", tag: "Prioritaire" },
-      { name: "3020 — Non au harcèlement scolaire", desc: "Numéro national gratuit", call: "3020", tag: "Scolaire" },
-      { name: "Défenseur des droits", desc: "Pour le harcèlement moral au travail", call: "09 69 39 00 00", tag: "Travail" }
-    ],
-    script: "« Bonjour, je subis du harcèlement et j'aimerais savoir comment me protéger et faire reconnaître ce que je vis. »",
-    what: [
-      "Conservez TOUTES les preuves : SMS, emails, captures d'écran, témoins.",
-      "Le 3018 peut faire supprimer du contenu en ligne en moins de 2h.",
-      "Pour le travail : le médecin du travail et l'inspection du travail sont vos alliés.",
-      "Pour l'école : le 3020 contacte directement votre établissement si vous le souhaitez."
-    ]
-  },
-  violence_enfant: {
-    title: "Protéger un enfant est une priorité absolue.",
-    sub: "Si vous êtes témoin ou avez connaissance d'une maltraitance sur un enfant, vous avez non seulement le droit mais le devoir de signaler. C'est anonyme et protège l'enfant.",
-    numbers: [
-      { name: "119 — Allô Enfance en Danger", desc: "24h/24 · 7j/7 · Gratuit · Anonyme · Confidentiel", call: "119", tag: "Prioritaire" },
-      { name: "17 — Police Secours", desc: "En cas de danger immédiat pour l'enfant", call: "17", tag: "Urgence" },
-      { name: "CRIP — Cellule de Recueil", desc: "Cellule départementale de protection de l'enfance", call: "Site service-public.fr", tag: "Officiel" }
-    ],
-    script: "« Bonjour, je voudrais signaler une situation qui m'inquiète concernant un enfant. Voici ce que j'ai constaté : ... »",
-    what: [
-      "Votre signalement est anonyme — votre identité ne sera pas révélée.",
-      "Vous serez écouté(e) par des professionnels formés à la protection de l'enfance.",
-      "Une enquête sera diligentée pour évaluer la situation de l'enfant.",
-      "Vous pouvez signaler même en cas de doute — mieux vaut un signalement de trop qu'un de moins."
-    ]
-  }
-};
-
-function showUrgencyScreen(urgencyType) {
-  const data = urgencyData[urgencyType];
-  if(!data) {
-    goTo('result');
-    return;
-  }
-
-  document.getElementById('urg-title').textContent = data.title;
-  document.getElementById('urg-sub').textContent = data.sub;
-
-  // Numéros
-  const numbersContainer = document.getElementById('urg-numbers');
-  numbersContainer.innerHTML = data.numbers.map(n => {
-    const isPhone = /^[\d\s]+$/.test(n.call);
-    const href = isPhone ? `tel:${n.call.replace(/\s/g, '')}` : null;
-    if(isPhone) {
-      return `<a class="urg-number" href="${href}">
-        <div class="urg-num-icon">📞</div>
-        <div class="urg-num-info">
-          <div class="urg-num-name">${n.name}</div>
-          <div class="urg-num-desc">${n.desc}</div>
-          <div class="urg-num-tag">${n.tag}</div>
-        </div>
-        <div class="urg-num-call">${n.call}</div>
-      </a>`;
-    } else {
-      return `<div class="urg-number">
-        <div class="urg-num-icon">🌐</div>
-        <div class="urg-num-info">
-          <div class="urg-num-name">${n.name}</div>
-          <div class="urg-num-desc">${n.desc}</div>
-          <div class="urg-num-tag">${n.tag}</div>
-        </div>
-        <div class="urg-num-call" style="font-size:13px;">${n.call}</div>
-      </div>`;
-    }
-  }).join('');
-
-  document.getElementById('urg-script').textContent = data.script;
-
-  const whatList = document.getElementById('urg-what-list');
-  whatList.innerHTML = data.what.map((item, i) =>
-    `<div class="urg-what-item"><div class="urg-what-num">${i+1}</div><div>${item}</div></div>`
-  ).join('');
-
-  document.getElementById('urg-geo-result').classList.remove('show');
-  document.getElementById('urg-geo-result').innerHTML = '';
-
-  goTo('urgency');
-}
-
-function findNearby() {
-  const resultEl = document.getElementById('urg-geo-result');
-  resultEl.classList.add('show');
-  resultEl.innerHTML = '<div style="color:var(--muted);font-style:italic;">📡 Recherche en cours...</div>';
-
-  if(!navigator.geolocation) {
-    resultEl.innerHTML = `Géolocalisation non disponible sur cet appareil.<br>
-      <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/commissariat+police+pres+de+moi">🔍 Chercher un commissariat sur Google Maps</a>
-      <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/hopital+urgences+pres+de+moi">🏥 Chercher des urgences sur Google Maps</a>`;
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      const lat = pos.coords.latitude;
-      const lon = pos.coords.longitude;
-      resultEl.innerHTML = `📍 Localisation détectée. Choisissez un service à proximité :<br>
-        <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/commissariat+gendarmerie/@${lat},${lon},14z">🚓 Commissariats / Gendarmeries</a>
-        <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/urgences+hopital/@${lat},${lon},14z">🏥 Urgences hospitalières</a>
-        <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/UMJ+unite+medico+judiciaire/@${lat},${lon},14z">⚕️ UMJ (Unité Médico-Judiciaire)</a>
-        <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/CIDFF+centre+information+droits+femmes/@${lat},${lon},14z">💜 CIDFF / Associations d'aide</a>`;
-    },
-    (err) => {
-      resultEl.innerHTML = `Impossible d'obtenir votre localisation. Vous pouvez chercher manuellement :<br>
-        <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/commissariat+police+pres+de+moi">🚓 Commissariats près de chez vous</a>
-        <a class="urg-geo-link" target="_blank" href="https://www.google.com/maps/search/urgences+pres+de+moi">🏥 Urgences hospitalières</a>`;
-    },
-    { timeout: 8000 }
-  );
 }
 
 function copyResult() {
@@ -1242,73 +788,6 @@ function copyResult() {
     b.textContent = '✓ Copié !';
     setTimeout(() => b.textContent = '📋 Copier', 2000);
   });
-}
-
-// ─── AUTO-ÉVALUATION POST-OUTIL ──────
-function selfEvaluate(emotion) {
-  // Met à jour le halo immédiatement avec le ressenti de l'utilisateur
-  currentEmotion = emotion;
-  updateHalo(emotion);
-
-  // Sélection visuelle des boutons
-  document.querySelectorAll('.se-btn').forEach(b => b.classList.remove('selected'));
-  document.querySelector(`.se-btn.${emotion}`).classList.add('selected');
-
-  // Met à jour aussi la sélection dans le modal bien-être
-  document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('selected'));
-  const modalBtn = document.querySelector(`.emotion-btn[data-emotion="${emotion}"]`);
-  if(modalBtn) modalBtn.classList.add('selected');
-
-  // Affiche la réponse adaptée
-  const responseEl = document.getElementById('se-response');
-  responseEl.classList.remove('stress','neutral','calm','show');
-  responseEl.classList.add(emotion, 'show');
-
-  const responses = {
-    stress: {
-      message: '« Reformuler ne suffit pas toujours. Le corps a besoin de temps. C\'est normal. Voici trois chemins pour finir d\'évacuer cette tension. Choisissez celui qui vous parle. »',
-      actions: [
-        { label: '🌬️ Respiration', tab: 'breathing' },
-        { label: '💭 Sagesse', tab: 'quote' },
-        { label: '🏃 Mouvement', tab: 'move' }
-      ]
-    },
-    neutral: {
-      message: '« Vous êtes apaisé. C\'est déjà un beau chemin. Voulez-vous approfondir ce calme par une pratique douce ? »',
-      actions: [
-        { label: '🌬️ Respiration', tab: 'breathing' },
-        { label: '💭 Sagesse', tab: 'quote' },
-        { label: '🏃 Mouvement', tab: 'move' }
-      ]
-    },
-    calm: {
-      message: '« Vous voilà serein. Vous venez de transformer une tension en parole juste. Honorez ce moment — c\'est exactement ce que Kairos cherche à cultiver en vous. »',
-      celebration: true,
-      actions: [
-        { label: '✨ Cultiver ce calme', tab: 'quote' },
-        { label: '🏃 Mouvement doux', tab: 'move' }
-      ]
-    }
-  };
-
-  const r = responses[emotion];
-  let html = '';
-  if(r.celebration) {
-    html += '<div class="ser-celebration">🌿✨🌿</div>';
-  }
-  html += `<div class="ser-message">${r.message}</div>`;
-  document.getElementById('ser-message').innerHTML = '';
-  responseEl.querySelector('.ser-message').innerHTML = r.celebration ? '<div class="ser-celebration">🌿✨🌿</div>' + r.message : r.message;
-
-  // Boutons d'action
-  const actionsEl = document.getElementById('ser-actions');
-  actionsEl.innerHTML = r.actions.map(a =>
-    `<button class="ser-action" type="button" onclick="openWellnessFromEval('${a.tab}')">${a.label}</button>`
-  ).join('');
-}
-
-function openWellnessFromEval(tab) {
-  openWellness(tab);
 }
 
 function showError(msg) {
