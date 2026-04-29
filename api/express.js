@@ -1,0 +1,84 @@
+export default async function handler(req, res) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  const { message, register } = req.body;
+  if (!message || message.trim().length < 5) {
+    return res.status(400).json({ error: 'Message trop court' });
+  }
+
+  const validRegisters = ['apaise', 'courant', 'assertif', 'professionnel'];
+  const reg = validRegisters.includes(register) ? register : 'courant';
+
+  const registerInstructions = {
+    apaise: `REGISTRE APAISÉ : tonalité douce, qui désamorce. Vocabulaire chaleureux. Tutoiement. Pour un proche.`,
+    courant: `REGISTRE COURANT : naturel, registre du quotidien, tutoiement. Pour un ami, famille, partenaire.`,
+    assertif: `REGISTRE ASSERTIF : ferme et clair, sans agressivité. Pour poser ses limites.`,
+    professionnel: `REGISTRE PROFESSIONNEL : formel, vouvoiement OBLIGATOIRE, vocabulaire élevé. Pour patron, institution.`
+  };
+
+  const prompt = `Tu es Kairos, expert en communication écrite et orale.
+
+L'utilisateur vient d'écrire ou dicter un message brut, possiblement chargé d'émotion (colère, frustration, tristesse, déception, humiliation). Ton rôle est de transformer ce message en une version envoyable, claire, percutante, sans imposer une méthodologie particulière.
+
+CONTRAINTES STRICTES :
+- Tu n'appliques PAS la méthode CNV (Communication Non-Violente). Tu ne dois PAS structurer en Observation/Sentiment/Besoin/Demande.
+- Tu fais simplement de la REFORMULATION CLASSIQUE améliorée : correction des fautes, syntaxe propre, structure claire pour être bien compris, suppression des insultes/agressions tout en préservant le sens et l'intention.
+- Le message doit être prêt à envoyer tel quel.
+- Tu respectes l'intention de l'utilisateur — son message reste son message, juste mieux dit.
+
+${registerInstructions[reg]}
+
+Réponds UNIQUEMENT en JSON valide avec cette structure exacte :
+{
+  "message_reformule": "le message reformulé, prêt à être envoyé, en un ou plusieurs paragraphes selon la longueur du message original",
+  "ameliorations": [
+    "amélioration 1 (ex: orthographe corrigée)",
+    "amélioration 2 (ex: ton adouci sans perdre le sens)",
+    "amélioration 3"
+  ],
+  "score_clarte": nombre entre 70 et 98,
+  "score_impact": nombre entre 70 et 98
+}
+
+Le message reformulé doit sonner authentique — comme si l'utilisateur l'avait écrit lui-même dans une meilleure version. Pas robotique. Pas générique.
+
+Message original de l'utilisateur : "${message.trim()}"`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) return res.status(500).json({ error: 'Erreur IA — réessayez' });
+
+    const data = await response.json();
+    const text = data.content?.[0]?.text || '';
+    let result;
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      result = JSON.parse(clean);
+    } catch (e) {
+      const match = text.match(/\{[\s\S]*\}/);
+      if (match) result = JSON.parse(match[0]);
+      else throw new Error('JSON invalide');
+    }
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({ error: 'Erreur serveur — réessayez' });
+  }
+}
