@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Diris — Trouvez les bons mots</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4ede0;--bg-2:#ebe2cf;--white:#fff;--surface:#fdfaf3;--surface-warm:#f8f1e3;
+  --primary:#2d7d6f;--primary-2:#1e5d52;--primary-3:#cfe3dd;--primary-soft:#e3efeb;--primary-glow:rgba(45,125,111,0.18);
+  --accent:#c5612e;--accent-2:#a04d20;--accent-light:#f6dcc7;--accent-glow:rgba(197,97,46,0.22);
+  --gold:#c8a253;--gold-light:#f0e3c0;
+  --ink:#2a2620;--ink-2:#4a4136;--ink-3:#7a6e5c;--muted:#b3a995;
+  --border:#d6cab1;--border-soft:#e7ddc7;--border-warm:#c4b696;
+  --r-sm:14px;--r:20px;--r-lg:28px;
+  --shadow-sm:0 1px 2px rgba(122,110,92,0.08);
+  --shadow:0 4px 16px rgba(122,110,92,0.10),0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg:0 12px 40px rgba(122,110,92,0.15);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:'Inter',-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);
+  min-height:100vh;min-height:100dvh;
+  -webkit-font-smoothing:antialiased;letter-spacing:-0.01em;
+  background-image:
+    radial-gradient(ellipse at 20% 20%,rgba(45,125,111,0.08) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 70%,rgba(197,97,46,0.06) 0%,transparent 50%),
+    radial-gradient(ellipse at 60% 30%,rgba(200,162,83,0.05) 0%,transparent 40%);
+  overflow-x:hidden;
+}
+.app{position:relative;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto;}
+.app::before{
+  content:'';position:fixed;top:-150px;left:50%;transform:translateX(-50%);
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,var(--primary-glow) 0%,var(--accent-glow) 50%,transparent 75%);
+  filter:blur(60px);pointer-events:none;z-index:0;
+}
+
+/* HEADER */
+header{
+  padding:22px 24px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(244,237,224,0.85);backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border-soft);
+  position:sticky;top:0;z-index:50;
+}
+.logo{display:flex;align-items:center;gap:14px;}
+.logo-mark{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Grotesk',sans-serif;font-size:21px;font-weight:700;color:white;letter-spacing:-0.04em;
+  box-shadow:0 6px 16px rgba(45,125,111,0.30),inset 0 -3px 8px rgba(0,0,0,0.15),inset 0 2px 6px rgba(255,255,255,0.25);
+}
+.logo-text{display:flex;flex-direction:column;line-height:1;}
+.logo-name{font-family:'Space Grotesk',sans-serif;font-size:20px;color:var(--primary-2);font-weight:600;letter-spacing:-0.03em;}
+.logo-tag{font-size:11px;color:var(--accent);margin-top:4px;font-style:italic;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.header-action{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--surface);border:1px solid var(--border-soft);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--primary-2);font-family:inherit;
+}
+
+/* SCREENS */
+.screen{display:none;flex:1;padding:0 22px 30px;position:relative;z-index:1;}
+.screen.active{display:flex;flex-direction:column;animation:sIn 0.4s ease both;}
+@keyframes sIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* WELCOME */
+.welcome-greet{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(28px,7vw,36px);font-weight:600;color:var(--ink);
+  letter-spacing:-0.04em;line-height:1.1;
+  margin-top:24px;margin-bottom:10px;
+}
+.welcome-greet em{color:var(--primary);font-style:italic;font-weight:500;}
+.welcome-tagline{
+  font-size:14px;color:var(--ink-3);
+  line-height:1.6;margin-bottom:24px;font-style:italic;
+}
+.ornament{
+  display:flex;justify-content:center;gap:8px;
+  margin:18px 0 22px;color:var(--accent);opacity:0.5;
+}
+.ornament span{width:4px;height:4px;border-radius:50%;background:currentColor;}
+.ornament span:nth-child(2){width:12px;}
+
+/* PROGRESS */
+.progress{display:flex;gap:6px;margin:20px 0 24px;}
+.progress-step{flex:1;height:4px;border-radius:2px;background:var(--border-soft);}
+.progress-step.active{background:var(--primary);}
+.progress-step.done{background:var(--accent);}
+
+/* STEP */
+.step-kicker{
+  font-size:11px;font-weight:600;color:var(--accent);
+  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;font-style:italic;
+}
+.step-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:26px;font-weight:600;color:var(--ink);
+  letter-spacing:-0.03em;line-height:1.2;margin-bottom:6px;
+}
+.step-title em{font-style:italic;color:var(--primary);font-weight:500;}
+.step-sub{font-size:13px;color:var(--ink-3);line-height:1.55;margin-bottom:24px;}
+
+/* CHOICES */
+.choices{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.choice{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;
+  background:var(--surface);
+  border:1.5px solid var(--border-soft);
+  border-radius:var(--r);
+  cursor:pointer;
+  transition:all 0.25s;
+  text-align:left;font-family:inherit;width:100%;
+  position:relative;box-shadow:var(--shadow-sm);color:inherit;
+}
+.choice:hover{border-color:var(--primary);transform:translateX(2px);box-shadow:var(--shadow);}
+.choice.selected{
+  border-color:var(--primary);
+  background:linear-gradient(135deg,var(--primary-soft),var(--surface));
+  box-shadow:0 0 0 3px rgba(45,125,111,0.15);
+}
+.choice-icon{
+  flex-shrink:0;width:42px;height:42px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--primary-soft);border-radius:12px;color:var(--primary-2);
+}
+.choice.selected .choice-icon{
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white;
+}
+.choice-content{flex:1;}
+.choice-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-0.02em;
+}
+.choice-desc{font-size:11px;color:var(--ink-3);line-height:1.4;margin-top:3px;}
+
+/* TRANSPARENCY BUTTONS (Écran 1) */
+.transparency-row{
+  display:flex;gap:8px;margin-top:18px;justify-content:center;flex-wrap:wrap;
+}
+.transparency-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 14px;
+  background:transparent;
+  border:1px solid var(--border-soft);
+  border-radius:100px;
+  cursor:pointer;font-family:inherit;font-size:11px;
+  color:var(--ink-3);transition:all 0.2s;
+}
+.transparency-btn:hover{
+  border-color:var(--accent);color:var(--accent-2);background:var(--accent-light);
+}
+.transparency-btn-icon{
+  display:flex;align-items:center;justify-content:center;color:var(--accent);
+}
+.transparency-btn-title{font-weight:500;}
+
+/* BACK */
+.step-back{
+  background:none;border:none;color:var(--ink-3);
+  font-size:13px;cursor:pointer;margin-top:24px;margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;font-family:inherit;
+}
+
+/* INPUT (Écran 4) */
+.input-card{
+  background:var(--surface);
+  border:2px solid var(--border-soft);
+  border-radius:var(--r);
+  overflow:hidden;margin-bottom:18px;
+  box-shadow:var(--shadow-sm);transition:all 0.25s;
+}
+.input-card:focus-within{
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px var(--primary-glow),var(--shadow);
+}
+.input-card-header{
+  padding:14px 18px 6px;font-size:11px;font-weight:600;color:var(--accent);
+  letter-spacing:0.06em;text-transform:uppercase;font-style:italic;
+}
+textarea{
+  width:100%;background:transparent;border:none;outline:none;
+  font-family:inherit;font-size:15px;color:var(--ink);line-height:1.7;
+  padding:6px 18px 14px;resize:none;min-height:140px;
+}
+textarea::placeholder{color:var(--muted);font-style:italic;}
+.input-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;border-top:1px solid var(--border-soft);
+  background:var(--surface-warm);gap:6px;
+}
+.char-count{font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums;flex-shrink:0;}
+.mic-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:white;border:none;border-radius:100px;
+  font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;
+  flex-shrink:0;box-shadow:0 3px 10px rgba(197,97,46,0.30);
+}
+.mic-btn.recording{
+  background:linear-gradient(135deg,#c04040,#a02020);
+  animation:micPulse 1.2s ease infinite;
+}
+@keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(192,64,64,0.4)}50%{box-shadow:0 0 0 10px rgba(192,64,64,0)}}
+.clear-btn{
+  font-size:12px;color:var(--muted);background:none;border:none;
+  cursor:pointer;padding:6px 8px;flex-shrink:0;
+}
+
+.cta{
+  width:100%;padding:17px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:white;border:none;border-radius:100px;
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 8px 24px rgba(45,125,111,0.30),inset 0 -3px 0 rgba(0,0,0,0.10);
+  margin-bottom:14px;
+}
+.cta:disabled{opacity:0.5;cursor:not-allowed;}
+
+.error-box{
+  background:rgba(192,64,64,0.08);
+  border:1px solid rgba(192,64,64,0.25);
+  border-radius:var(--r-sm);
+  padding:12px 16px;font-size:13px;color:#a02020;
+  display:none;margin-bottom:12px;
+}
+.error-box.show{display:block;}
+
+/* LOADING */
+#loading{align-items:center;justify-content:center;text-align:center;padding-top:80px;}
+.loading-ring{
+  width:78px;height:78px;border-radius:50%;
+  border:2px solid var(--border-soft);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;margin:0 auto 32px;background:var(--surface);
+}
+.loading-ring::before{
+  content:'';position:absolute;inset:-2px;border-radius:50%;
+  border:2px solid transparent;border-top-color:var(--primary);
+  animation:rot 1.2s linear infinite;
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+.loading-symbol{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:26px;font-weight:600;color:var(--primary-2);
+}
+.loading-phase{
+  font-size:14px;color:var(--ink-3);display:none;opacity:0;
+  transition:opacity 0.4s;margin-bottom:8px;
+}
+.loading-phase.show{display:block;opacity:1;}
+.loading-dots{display:flex;gap:8px;justify-content:center;margin-top:14px;}
+.loading-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--primary);
+  opacity:0.3;animation:dp 1.5s ease infinite;
+}
+.loading-dot:nth-child(2){animation-delay:0.2s}
+.loading-dot:nth-child(3){animation-delay:0.4s}
+@keyframes dp{0%,100%{opacity:0.3;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+/* RESULT */
+.result-kicker{
+  display:flex;align-items:center;gap:8px;
+  font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:8px;margin-top:24px;
+}
+.result-check{
+  width:18px;height:18px;border-radius:50%;background:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:white;
+}
+.result-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:600;color:var(--ink);
+  letter-spacing:-0.03em;margin-bottom:18px;line-height:1.2;
+}
+.result-title em{font-style:italic;color:var(--primary);font-weight:500;}
+
+/* VERSION TABS */
+.versions-tabs{
+  display:flex;gap:6px;margin-bottom:18px;overflow-x:auto;
+  scrollbar-width:none;
+}
+.versions-tabs::-webkit-scrollbar{display:none;}
+.vt{
+  flex:1 0 auto;padding:9px 14px;
+  border-radius:100px;
+  border:1.5px solid var(--border-soft);
+  background:var(--surface);
+  font-size:12px;font-weight:500;cursor:pointer;
+  color:var(--ink-2);font-family:inherit;
+  white-space:nowrap;display:flex;align-items:center;gap:6px;
+}
+.vt.active{
+  border-color:var(--primary);
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));color:white;
+}
+
+/* ORIGINAL BOX */
+.original-box{
+  background:var(--surface);
+  border:1px solid var(--border-soft);
+  border-radius:var(--r);
+  padding:14px 16px;margin-bottom:6px;
+}
+.original-label{
+  font-size:9px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:5px;
+}
+.original-text{font-size:13px;color:var(--ink-2);line-height:1.6;font-style:italic;}
+.original-arrow{text-align:center;font-size:16px;color:var(--primary);margin:8px 0;}
+
+/* CNV STEPS */
+.cnv-steps{display:flex;flex-direction:column;gap:9px;margin-bottom:14px;}
+.cnv-step{
+  border-radius:var(--r);padding:14px 16px;border:1.5px solid;
+  animation:stp 0.5s ease both;
+}
+@keyframes stp{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:translateX(0)}}
+.cnv-step:nth-child(1){animation-delay:0.1s;background:#f0faf6;border-color:rgba(45,125,111,0.25);}
+.cnv-step:nth-child(2){animation-delay:0.2s;background:#fdf8ee;border-color:rgba(196,154,44,0.25);}
+.cnv-step:nth-child(3){animation-delay:0.3s;background:#f0f5fb;border-color:rgba(80,120,180,0.25);}
+.cnv-step:nth-child(4){animation-delay:0.4s;background:#faf0f8;border-color:rgba(160,90,180,0.25);}
+.step-header-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.step-badge{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+}
+.cnv-step:nth-child(1) .step-badge{background:rgba(45,125,111,0.15);color:var(--primary-2);}
+.cnv-step:nth-child(2) .step-badge{background:rgba(196,154,44,0.15);color:#a07020;}
+.cnv-step:nth-child(3) .step-badge{background:rgba(80,120,180,0.15);color:#5078b4;}
+.cnv-step:nth-child(4) .step-badge{background:rgba(160,90,180,0.15);color:#a05ab4;}
+.step-label{font-size:9px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;}
+.cnv-step:nth-child(1) .step-label{color:var(--primary-2);}
+.cnv-step:nth-child(2) .step-label{color:#a07020;}
+.cnv-step:nth-child(3) .step-label{color:#5078b4;}
+.cnv-step:nth-child(4) .step-label{color:#a05ab4;}
+.step-text{font-size:14px;color:var(--ink);line-height:1.65;}
+
+/* MESSAGE FINAL */
+.full-message{
+  background:linear-gradient(135deg,var(--primary-soft),#f0f8f5);
+  border:1.5px solid var(--primary-3);
+  border-radius:var(--r);padding:18px;margin-bottom:14px;
+  animation:stp 0.5s ease 0.6s both;
+}
+.full-message-label{
+  font-size:9px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--primary);margin-bottom:10px;
+}
+.full-message-text{
+  font-family:'Space Grotesk',sans-serif;font-size:15px;color:var(--ink);
+  line-height:1.75;font-weight:500;white-space:pre-wrap;
+}
+
+/* TIP PÉDAGOGIQUE */
+.tip-box{
+  background:linear-gradient(135deg,var(--surface-warm),var(--accent-light));
+  border:1px solid var(--accent-glow);
+  border-radius:var(--r-sm);
+  padding:12px 14px;margin-bottom:14px;
+  display:flex;gap:10px;align-items:flex-start;
+  animation:stp 0.5s ease 0.7s both;
+}
+.tip-icon{flex-shrink:0;color:var(--accent);font-size:16px;}
+.tip-text{
+  font-size:12.5px;color:var(--ink-2);line-height:1.55;
+  font-style:italic;flex:1;
+}
+.tip-text strong{color:var(--accent-2);font-style:normal;font-weight:600;}
+
+/* IMPROVEMENTS */
+.improvements-list{
+  background:var(--surface);
+  border:1px solid var(--border-soft);
+  border-radius:var(--r);padding:16px 18px;margin-bottom:14px;
+}
+.improvements-label{
+  font-size:10px;letter-spacing:0.15em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:10px;font-weight:600;
+}
+.improvement-item{
+  font-size:13px;color:var(--ink-2);line-height:1.6;
+  padding:4px 0;display:flex;gap:8px;
+}
+.improvement-item::before{
+  content:'✓';color:var(--primary);font-weight:700;flex-shrink:0;
+}
+
+/* ACTIONS */
+.actions{display:flex;gap:10px;animation:stp 0.5s ease 0.8s both;margin-bottom:14px;}
+.btn-copy{
+  flex:1;padding:14px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:white;border:none;border-radius:100px;
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 6px 16px rgba(45,125,111,0.25);
+}
+.btn-send{
+  flex:1;padding:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  color:white;border:none;border-radius:100px;
+  font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 6px 16px rgba(197,97,46,0.25);
+}
+.btn-again{
+  padding:14px 16px;
+  background:var(--surface);color:var(--ink-2);
+  border:1.5px solid var(--border);border-radius:100px;
+  font-family:inherit;font-size:14px;cursor:pointer;
+}
+
+/* TRUST NOTICE */
+.trust-notice{
+  background:var(--gold-light);
+  border:1px solid rgba(200,162,83,0.30);
+  border-radius:var(--r-sm);padding:13px 15px;
+  font-size:11px;color:var(--ink-2);line-height:1.55;
+  display:flex;gap:10px;align-items:flex-start;
+}
+.trust-notice .icon{color:var(--gold);flex-shrink:0;margin-top:1px;}
+.trust-notice strong{color:var(--accent-2);font-weight:600;}
+
+/* SEND SHEET (modal-like screen 6) */
+.send-sheet{
+  padding:20px 0 12px;
+}
+.send-buttons{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;
+}
+.send-btn{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:18px 10px;
+  background:var(--surface);
+  border:1.5px solid var(--border-soft);
+  border-radius:var(--r-sm);
+  cursor:pointer;font-family:inherit;
+  transition:all 0.2s;text-decoration:none;
+}
+.send-btn:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow);}
+.send-btn-icon{
+  display:flex;align-items:center;justify-content:center;
+  width:42px;height:42px;border-radius:12px;color:white;
+}
+.send-btn-label{
+  font-size:11px;font-weight:500;color:var(--ink-2);letter-spacing:-0.005em;
+}
+.share-native-btn{
+  width:100%;padding:14px;
+  background:var(--surface);border:1.5px solid var(--accent);color:var(--accent-2);
+  border-radius:100px;font-family:inherit;font-size:14px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+
+/* DETAIL SCREENS */
+.detail-hero{text-align:center;padding:20px 0 28px;}
+.detail-hero-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;color:white;
+  box-shadow:0 8px 24px rgba(197,97,46,0.30);
+}
+.detail-kicker{
+  font-size:11px;font-weight:600;color:var(--accent);
+  letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:10px;font-style:italic;
+}
+.detail-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:26px;font-weight:600;color:var(--ink);
+  letter-spacing:-0.03em;line-height:1.2;
+}
+.detail-title em{font-style:italic;color:var(--primary);font-weight:500;}
+
+/* MVP BADGE */
+.mvp-badge{
+  background:linear-gradient(135deg,var(--gold-light),#fdf3e3);
+  border:1.5px solid rgba(200,162,83,0.40);
+  border-radius:var(--r-sm);padding:14px 16px;margin-bottom:18px;
+  display:flex;gap:11px;align-items:flex-start;
+}
+.mvp-badge-icon{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--gold);color:white;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.mvp-badge-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:600;color:#a08030;
+  letter-spacing:-0.02em;margin-bottom:4px;
+}
+.mvp-badge-text{font-size:11.5px;color:var(--ink-2);line-height:1.55;}
+.mvp-badge-text strong{color:#a08030;font-weight:600;}
+
+.detail-points{display:flex;flex-direction:column;gap:12px;margin-bottom:20px;}
+.detail-point{
+  background:var(--surface);
+  border:1.5px solid var(--border-soft);
+  border-radius:var(--r);padding:16px 18px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.detail-point-num{
+  width:28px;height:28px;border-radius:50%;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  color:white;font-family:'Space Grotesk',sans-serif;
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.detail-point-content{flex:1;}
+.detail-point-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;font-weight:600;color:var(--ink);
+  letter-spacing:-0.02em;margin-bottom:4px;
+}
+.detail-point-desc{font-size:12px;color:var(--ink-3);line-height:1.55;}
+
+/* PRICING */
+.pricing-tiers{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;
+}
+.pricing-tier{
+  background:var(--surface);
+  border:1.5px solid var(--border-soft);
+  border-radius:var(--r-sm);padding:12px 8px;text-align:center;
+}
+.pricing-tier.featured{
+  border-color:var(--primary);
+  background:linear-gradient(135deg,var(--primary-soft),var(--surface));
+  box-shadow:0 0 0 3px rgba(45,125,111,0.10);
+}
+.pricing-amount{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:600;color:var(--primary-2);letter-spacing:-0.02em;
+}
+.pricing-tier.featured .pricing-amount{color:var(--primary);}
+.pricing-period{font-size:9px;color:var(--ink-3);margin-top:2px;letter-spacing:0.02em;}
+.pricing-breakdown{
+  background:var(--surface-warm);
+  border:1px solid var(--border-soft);
+  border-radius:var(--r-sm);padding:14px;margin-bottom:18px;
+}
+.pricing-breakdown-title{
+  font-size:10px;font-weight:600;color:var(--accent);
+  letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;font-style:italic;
+}
+.pricing-line{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;font-size:12px;border-bottom:1px solid var(--border-soft);
+}
+.pricing-line:last-child{border-bottom:none;}
+.pricing-label{color:var(--ink-2);}
+.pricing-value{font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--primary-2);}
+
+.detail-quote{
+  background:linear-gradient(135deg,var(--surface-warm),var(--accent-light));
+  border:1.5px solid var(--accent-light);
+  border-radius:var(--r);padding:16px 18px;
+  font-size:12px;color:var(--ink-2);line-height:1.6;font-style:italic;text-align:center;
+}
+.detail-quote strong{color:var(--accent-2);font-style:normal;}
+
+/* URGENCY */
+#urgency{padding-top:30px;}
+.urg-header{text-align:center;margin-bottom:24px;}
+.urg-icon-wrap{display:flex;justify-content:center;margin-bottom:16px;}
+.urg-icon{
+  width:70px;height:70px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;box-shadow:0 8px 24px rgba(197,97,46,0.30);
+}
+.urg-kicker{
+  font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:12px;font-weight:600;
+}
+.urg-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:600;color:var(--ink);
+  line-height:1.25;margin-bottom:14px;letter-spacing:-0.02em;
+}
+.urg-sub{font-size:14px;color:var(--ink-2);line-height:1.7;}
+.urg-numbers{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.urg-number{
+  background:var(--surface);
+  border:2px solid var(--primary);
+  border-radius:var(--r);padding:14px;
+  display:flex;align-items:center;gap:12px;
+  text-decoration:none;color:inherit;
+  font-family:inherit;box-shadow:var(--shadow-sm);
+}
+.urg-num-icon{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--primary-soft);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.urg-num-info{flex:1;}
+.urg-num-name{font-size:13px;font-weight:600;color:var(--ink);}
+.urg-num-desc{font-size:11px;color:var(--ink-3);line-height:1.4;margin-top:2px;}
+.urg-num-call{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;color:var(--primary-2);font-weight:600;flex-shrink:0;
+}
+.urg-back{
+  width:100%;padding:13px;
+  background:var(--surface);border:1px solid var(--border);
+  color:var(--ink-3);border-radius:100px;
+  font-family:inherit;font-size:13px;cursor:pointer;
+}
+.urg-confid{
+  font-size:11px;color:var(--ink-3);font-style:italic;
+  text-align:center;margin-top:14px;line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark">D</div>
+      <div class="logo-text">
+        <span class="logo-name">Diris</span>
+        <span class="logo-tag">Mieux communiquer</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="header-action" type="button" onclick="goTo('home')" aria-label="Accueil">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 0 0 1 1h3v-6h6v6h3a1 1 0 0 0 1-1V10"/></svg>
+      </button>
+      <button class="header-action" type="button" aria-label="Profil">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0 1 14 0v1"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ ÉCRAN 1 — OBJECTIF ÉMOTIONNEL ═══ -->
+  <div id="home" class="screen active">
+
+    <h1 class="welcome-greet">Vos émotions<br>sont <em>à vous.</em></h1>
+    <p class="welcome-tagline">Diris vous aide à les exprimer.</p>
+
+    <div class="ornament"><span></span><span></span><span></span></div>
+
+    <div class="step-kicker">Étape 1 / 4</div>
+    <h2 class="step-title">Que souhaitez-vous <em>aujourd'hui</em> ?</h2>
+    <p class="step-sub">Choisissez ce qui correspond le mieux à votre intention.</p>
+
+    <div class="choices" id="objectives">
+      <button class="choice" type="button" data-obj="apaiser" onclick="selectObjective(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Apaiser</div><div class="choice-desc">Désamorcer un conflit, réparer une relation</div></div>
+      </button>
+      <button class="choice" type="button" data-obj="compris" onclick="selectObjective(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18h6"/><path d="M3 12h12"/><path d="M3 6h18"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Être compris</div><div class="choice-desc">Faire entendre ce que je ressens vraiment</div></div>
+      </button>
+      <button class="choice" type="button" data-obj="limite" onclick="selectObjective(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Poser une limite</div><div class="choice-desc">Affirmer un refus, défendre mes droits</div></div>
+      </button>
+      <button class="choice" type="button" data-obj="calme" onclick="selectObjective(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Répondre calmement</div><div class="choice-desc">À un message ou une situation tendue</div></div>
+      </button>
+      <button class="choice" type="button" data-obj="pro" onclick="selectObjective(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Faire une demande pro</div><div class="choice-desc">Augmentation, congé, négociation</div></div>
+      </button>
+      <button class="choice" type="button" data-obj="officielle" onclick="selectObjective(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Démarche officielle</div><div class="choice-desc">Administration, courrier formel</div></div>
+      </button>
+    </div>
+
+    <div class="transparency-row">
+      <button class="transparency-btn" type="button" onclick="goTo('security')">
+        <span class="transparency-btn-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+        <span class="transparency-btn-title">Sécurité des données</span>
+      </button>
+      <button class="transparency-btn" type="button" onclick="goTo('pricing')">
+        <span class="transparency-btn-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><polyline points="9 12 15 12"/></svg></span>
+        <span class="transparency-btn-title">Transparence prix</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ ÉCRAN 2 — INTERLOCUTEUR ═══ -->
+  <div id="step2" class="screen">
+    <button class="step-back" type="button" onclick="goTo('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="progress">
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+      <div class="progress-step"></div>
+    </div>
+    <div class="step-kicker">Étape 2 / 4</div>
+    <h2 class="step-title">À qui <em>parlez-vous</em> ?</h2>
+    <p class="step-sub">Le ton sera adapté à votre interlocuteur.</p>
+    <div class="choices" id="interlocutors">
+      <button class="choice" type="button" data-inter="partenaire" onclick="selectInterlocutor(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Partenaire</div><div class="choice-desc">Conjoint(e), couple</div></div>
+      </button>
+      <button class="choice" type="button" data-inter="famille" onclick="selectInterlocutor(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Famille</div><div class="choice-desc">Parent, enfant, frère, sœur</div></div>
+      </button>
+      <button class="choice" type="button" data-inter="ami" onclick="selectInterlocutor(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Ami(e)</div><div class="choice-desc">Cercle proche</div></div>
+      </button>
+      <button class="choice" type="button" data-inter="collegue" onclick="selectInterlocutor(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11h-6"/><path d="M22 15h-6"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Collègue</div><div class="choice-desc">Niveau hiérarchique équivalent</div></div>
+      </button>
+      <button class="choice" type="button" data-inter="hierarchie" onclick="selectInterlocutor(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Hiérarchie</div><div class="choice-desc">Manager, patron, RH</div></div>
+      </button>
+      <button class="choice" type="button" data-inter="admin" onclick="selectInterlocutor(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="21" x2="21" y2="21"/><line x1="3" y1="10" x2="21" y2="10"/><polyline points="5 6 12 3 19 6"/><line x1="4" y1="10" x2="4" y2="21"/><line x1="20" y1="10" x2="20" y2="21"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Administration / Inconnu</div><div class="choice-desc">Service public, propriétaire, prestataire</div></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ ÉCRAN 3 — MODE ═══ -->
+  <div id="step3" class="screen">
+    <button class="step-back" type="button" onclick="goTo('step2')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="progress">
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+    </div>
+    <div class="step-kicker">Étape 3 / 4</div>
+    <h2 class="step-title">Comment souhaitez-vous <em>vous exprimer</em> ?</h2>
+    <p class="step-sub">Choisissez le mode qui vous convient le mieux.</p>
+    <div class="choices" id="modes">
+      <button class="choice" type="button" data-mode="cnv" onclick="selectMode(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Communication apaisée</div><div class="choice-desc">Méthode structurée pour faire passer un message difficile en douceur</div></div>
+      </button>
+      <button class="choice" type="button" data-mode="express" onclick="selectMode(this)">
+        <span class="choice-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
+        <div class="choice-content"><div class="choice-name">Expression libre</div><div class="choice-desc">Écrivez ce que vous ressentez, on transforme en mots utiles</div></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ ÉCRAN 4 — TEXTE ═══ -->
+  <div id="step4" class="screen">
+    <button class="step-back" type="button" onclick="goTo('step3')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="progress">
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step done"></div>
+      <div class="progress-step active"></div>
+    </div>
+    <div class="step-kicker">Étape 4 / 4</div>
+    <h2 class="step-title">Que voulez-vous <em>dire</em> ?</h2>
+    <p class="step-sub">Lâchez tout ce qui vous passe par la tête, on s'occupe du reste.</p>
+
+    <div class="input-card">
+      <div class="input-card-header">Votre message</div>
+      <textarea id="msg-input" placeholder="Écrivez ou dictez ce que vous avez sur le cœur..." oninput="updateChar()" maxlength="2000"></textarea>
+      <div class="input-footer">
+        <span class="char-count" id="char-count">0 / 2000</span>
+        <button class="mic-btn" type="button" id="mic-btn" onclick="toggleMic()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+          Dicter
+        </button>
+        <button class="clear-btn" type="button" onclick="clearMsg()">✕</button>
+      </div>
+    </div>
+
+    <div class="error-box" id="error-box">⚠️ <span id="error-msg"></span></div>
+
+    <button class="cta" type="button" id="cta-transform" onclick="transformMessage()" disabled>
+      Transformer mon message
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </button>
+  </div>
+
+  <!-- ═══ LOADING ═══ -->
+  <div id="loading" class="screen">
+    <div class="loading-ring"><div class="loading-symbol">D</div></div>
+    <div id="phase-1" class="loading-phase">Analyse de votre intention...</div>
+    <div id="phase-2" class="loading-phase">Compréhension du contexte...</div>
+    <div id="phase-3" class="loading-phase">Génération de 3 versions...</div>
+    <div id="phase-4" class="loading-phase">Finalisation...</div>
+    <div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>
+  </div>
+
+  <!-- ═══ RÉSULTAT (CNV ou EXPRESS) ═══ -->
+  <div id="result" class="screen">
+    <button class="step-back" type="button" onclick="goTo('step4')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="result-kicker"><div class="result-check">✓</div><span id="result-kicker-text">Message transformé</span></div>
+    <h2 class="result-title">Votre message <em>en 3 versions</em></h2>
+    <p class="step-sub">Choisissez celle qui vous correspond le mieux.</p>
+
+    <div class="versions-tabs">
+      <button class="vt active" type="button" data-v="doux" onclick="switchVariant('doux',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        Plus doux
+      </button>
+      <button class="vt" type="button" data-v="direct" onclick="switchVariant('direct',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        Plus direct
+      </button>
+      <button class="vt" type="button" data-v="ferme" onclick="switchVariant('ferme',this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Plus ferme
+      </button>
+    </div>
+
+    <div class="original-box">
+      <div class="original-label">Ce que vous avez exprimé</div>
+      <div class="original-text" id="original-display"></div>
+    </div>
+    <div class="original-arrow">↓</div>
+
+    <!-- CNV STRUCTURE (visible si mode CNV) -->
+    <div class="cnv-steps" id="cnv-steps" style="display:none;">
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">1</div><div class="step-label">Observation</div></div><div class="step-text" id="step-obs">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">2</div><div class="step-label">Sentiment</div></div><div class="step-text" id="step-sent">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">3</div><div class="step-label">Besoin</div></div><div class="step-text" id="step-need">—</div></div>
+      <div class="cnv-step"><div class="step-header-row"><div class="step-badge">4</div><div class="step-label">Demande</div></div><div class="step-text" id="step-req">—</div></div>
+    </div>
+
+    <!-- IMPROVEMENTS (visible si mode Express) -->
+    <div class="improvements-list" id="improvements-block" style="display:none;">
+      <div class="improvements-label">Améliorations apportées</div>
+      <div id="improvements"></div>
+    </div>
+
+    <div class="full-message">
+      <div class="full-message-label">✦ Message à envoyer</div>
+      <div class="full-message-text" id="full-message-text">—</div>
+    </div>
+
+    <div class="tip-box" id="tip-box">
+      <span class="tip-icon">💡</span>
+      <span class="tip-text" id="tip-text">—</span>
+    </div>
+
+    <div class="actions">
+      <button class="btn-copy" type="button" id="btn-copy" onclick="copyMessage()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        Copier
+      </button>
+      <button class="btn-send" type="button" onclick="goTo('send')">
+        Envoyer
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+
+    <div class="trust-notice">
+      <span class="icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </span>
+      <span><strong>🧪 MVP en test</strong> — Vos messages ne sont pas stockés mais transitent via des serveurs américains. Version finale sur serveurs 🇫🇷. Votre message est traité puis immédiatement supprimé.</span>
+    </div>
+  </div>
+
+  <!-- ═══ SEND ═══ -->
+  <div id="send" class="screen">
+    <button class="step-back" type="button" onclick="goTo('result')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="step-kicker">Envoyer le message</div>
+    <h2 class="step-title">Choisissez <em>l'application</em></h2>
+    <p class="step-sub">Le message sera pré-rempli, vous n'aurez plus qu'à choisir le destinataire.</p>
+
+    <div class="send-sheet">
+      <div class="send-buttons">
+        <button class="send-btn" type="button" onclick="sendVia('sms')">
+          <span class="send-btn-icon" style="background:#34C759;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M2 6c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H6l-4 4V6z"/></svg>
+          </span>
+          <span class="send-btn-label">SMS</span>
+        </button>
+        <button class="send-btn" type="button" onclick="sendVia('whatsapp')">
+          <span class="send-btn-icon" style="background:#25D366;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          </span>
+          <span class="send-btn-label">WhatsApp</span>
+        </button>
+        <button class="send-btn" type="button" onclick="sendVia('email')">
+          <span class="send-btn-icon" style="background:#EA4335;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+          </span>
+          <span class="send-btn-label">Email</span>
+        </button>
+      </div>
+      <button class="share-native-btn" type="button" onclick="sendVia('native')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Partager (Telegram, Signal, Messenger...)
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ SECURITY ═══ -->
+  <div id="security" class="screen">
+    <button class="step-back" type="button" onclick="goTo('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="detail-hero">
+      <div class="detail-hero-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="detail-kicker">Sécurité absolue</div>
+      <h1 class="detail-title">Vos mots <em>vous appartiennent.</em></h1>
+    </div>
+    <div class="mvp-badge">
+      <div class="mvp-badge-icon">🧪</div>
+      <div>
+        <div class="mvp-badge-title">Version test en cours</div>
+        <div class="mvp-badge-text">Voici notre <strong>engagement pour la version commerciale</strong>. Aujourd'hui, le MVP transite via des serveurs américains pour tester le produit. <strong>Aucun message n'est conservé</strong> — mais nous tendons vers la version 100% française décrite ci-dessous.</div>
+      </div>
+    </div>
+    <div class="detail-points">
+      <div class="detail-point"><div class="detail-point-num">1</div><div class="detail-point-content"><div class="detail-point-title">Aucun message stocké</div><div class="detail-point-desc">Traités puis immédiatement supprimés. Pas de base de données qui garde vos textes.</div></div></div>
+      <div class="detail-point"><div class="detail-point-num">2</div><div class="detail-point-content"><div class="detail-point-title">Serveurs français 🇫🇷</div><div class="detail-point-desc">Hébergement Scaleway Paris. Aucune donnée ne quitte le territoire français.</div></div></div>
+      <div class="detail-point"><div class="detail-point-num">3</div><div class="detail-point-content"><div class="detail-point-title">Zéro publicité, zéro tracking</div><div class="detail-point-desc">Pas de pixel d'analyse tiers. Vos données ne sont la marchandise de personne.</div></div></div>
+      <div class="detail-point"><div class="detail-point-num">4</div><div class="detail-point-content"><div class="detail-point-title">RGPD by design</div><div class="detail-point-desc">Conçu pour respecter le RGPD dès l'origine. Minimisation par défaut.</div></div></div>
+    </div>
+    <div class="detail-quote"><strong>Notre engagement :</strong> ce que vous écrivez ici disparaît dès que vous fermez l'écran. Toujours.</div>
+  </div>
+
+  <!-- ═══ PRICING ═══ -->
+  <div id="pricing" class="screen">
+    <button class="step-back" type="button" onclick="goTo('home')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Retour
+    </button>
+    <div class="detail-hero">
+      <div class="detail-hero-icon" style="background:linear-gradient(135deg,var(--primary),var(--primary-2));">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><polyline points="9 12 15 12"/></svg>
+      </div>
+      <div class="detail-kicker" style="color:var(--primary-2);">Transparence radicale</div>
+      <h1 class="detail-title">Vous payez <em>la juste valeur.</em></h1>
+    </div>
+    <div class="mvp-badge">
+      <div class="mvp-badge-icon">🧪</div>
+      <div>
+        <div class="mvp-badge-title">Version test gratuite</div>
+        <div class="mvp-badge-text">Le MVP est <strong>actuellement gratuit</strong> pour tester le produit et le concept. Voici nos <strong>tarifs prévus pour la version commerciale</strong> — sans surprise, sans publicité, sans exploitation cachée.</div>
+      </div>
+    </div>
+    <div class="pricing-tiers">
+      <div class="pricing-tier"><div class="pricing-amount">24h</div><div class="pricing-period">Gratuit</div></div>
+      <div class="pricing-tier featured"><div class="pricing-amount">4,99 €</div><div class="pricing-period">par mois</div></div>
+      <div class="pricing-tier"><div class="pricing-amount">39,99 €</div><div class="pricing-period">par an −33%</div></div>
+    </div>
+    <div class="pricing-breakdown">
+      <div class="pricing-breakdown-title">Décomposition sur 4,99 €</div>
+      <div class="pricing-line"><span class="pricing-label">Coûts IA</span><span class="pricing-value">1,80 €</span></div>
+      <div class="pricing-line"><span class="pricing-label">Hébergement français</span><span class="pricing-value">0,45 €</span></div>
+      <div class="pricing-line"><span class="pricing-label">Maintenance</span><span class="pricing-value">0,75 €</span></div>
+      <div class="pricing-line"><span class="pricing-label">Frais Stripe</span><span class="pricing-value">0,35 €</span></div>
+      <div class="pricing-line"><span class="pricing-label">TVA 20%</span><span class="pricing-value">0,83 €</span></div>
+      <div class="pricing-line"><span class="pricing-label">Marge nette</span><span class="pricing-value">0,81 €</span></div>
+    </div>
+    <div class="detail-points" style="margin-bottom:14px;">
+      <div class="detail-point"><div class="detail-point-num">✓</div><div class="detail-point-content"><div class="detail-point-title">Pas de publicité, jamais</div><div class="detail-point-desc">Le prix est notre seule source de revenu. Pas d'exploitation cachée.</div></div></div>
+      <div class="detail-point"><div class="detail-point-num">✓</div><div class="detail-point-content"><div class="detail-point-title">Sans engagement</div><div class="detail-point-desc">Annulable à tout moment, en un clic. Aucune friction.</div></div></div>
+    </div>
+    <div class="detail-quote"><strong>Notre conviction :</strong> aucun service ne vous montre où va votre argent. Nous, oui.</div>
+  </div>
+
+  <!-- ═══ URGENCY ═══ -->
+  <div id="urgency" class="screen">
+    <div class="urg-header">
+      <div class="urg-icon-wrap"><div class="urg-icon">🤝</div></div>
+      <div class="urg-kicker">Vous n'êtes pas seul(e)</div>
+      <h2 class="urg-title" id="urg-title">Une situation grave mérite un vrai soutien</h2>
+      <p class="urg-sub" id="urg-sub">Ce que vous traversez nécessite une aide professionnelle. Des spécialistes formés sont disponibles maintenant — gratuitement, et de façon confidentielle.</p>
+    </div>
+    <div class="urg-numbers" id="urg-numbers"></div>
+    <button class="urg-back" type="button" onclick="goTo('home')">Revenir à l'accueil</button>
+    <p class="urg-confid">🔒 Aucune trace de cet échange n'est conservée.</p>
+  </div>
+
+</div>
+
+<script>
+// ═══ STATE ═══
+let userObjective = 'apaiser';
+let userInterlocutor = 'famille';
+let userMode = 'cnv';
+let userMessage = '';
+let resultData = null;
+let currentVariant = 'doux';
+
+// MIC STATE
+let micRecognition = null, micActive = false;
+let micFinalBuffer='', micExistingText='', micCompletedSentences='';
+
+// URGENCY DATA
+const urgencyData = {
+  suicide:{title:"Votre vie compte. Parlons-en avec quelqu'un de qualifié.",sub:"Ce que vous traversez est immense. Des professionnels formés à la prévention du suicide sont disponibles 24h/24, gratuitement.",numbers:[{name:"3114 — Prévention du suicide",desc:"Gratuit · 24h/24",call:"3114"},{name:"SOS Amitié",desc:"Écoute anonyme",call:"0972394050"},{name:"15 — SAMU",desc:"En cas de geste imminent",call:"15"}]},
+  violence_conjugale:{title:"Vous avez le droit de vivre en sécurité.",sub:"Ce que vous subissez n'est jamais de votre faute. Des associations spécialisées peuvent vous aider à votre rythme.",numbers:[{name:"3919 — Violences Femmes Info",desc:"Anonyme · Gratuit · 24h/24",call:"3919"},{name:"17 — Police Secours",desc:"En cas de danger immédiat",call:"17"}]},
+  viol:{title:"Ce que vous avez vécu est un crime. Vous serez cru(e).",sub:"Une agression sexuelle nécessite une prise en charge rapide. Des professionnels formés sont là sans jugement.",numbers:[{name:"Viols Femmes Informations",desc:"Gratuit · Anonyme · Lun-Ven 10h-19h",call:"0800059595"},{name:"3919 — Violences Femmes Info",desc:"24h/24 · Anonyme",call:"3919"},{name:"17 — Police Secours",desc:"Pour porter plainte",call:"17"}]},
+  harcelement_grave:{title:"Le harcèlement n'est pas une fatalité.",sub:"Le harcèlement est puni par la loi française. Des professionnels peuvent vous aider à constituer un dossier.",numbers:[{name:"3018 — Harcèlement",desc:"Gratuit · Anonyme",call:"3018"},{name:"3020 — Harcèlement scolaire",desc:"Numéro national",call:"3020"}]},
+  violence_enfant:{title:"Protéger un enfant est une priorité.",sub:"Si vous avez connaissance d'une maltraitance, vous pouvez signaler. Anonyme.",numbers:[{name:"119 — Allô Enfance en Danger",desc:"24h/24 · Gratuit · Anonyme",call:"119"},{name:"17 — Police Secours",desc:"Danger immédiat",call:"17"}]}
+};
+
+// ═══ NAVIGATION ═══
+function goTo(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ═══ STEP 1 — Objective ═══
+function selectObjective(btn){
+  userObjective = btn.dataset.obj;
+  document.querySelectorAll('#objectives .choice').forEach(c=>c.classList.remove('selected'));
+  btn.classList.add('selected');
+  setTimeout(()=>goTo('step2'),200);
+}
+
+// ═══ STEP 2 — Interlocutor ═══
+function selectInterlocutor(btn){
+  userInterlocutor = btn.dataset.inter;
+  document.querySelectorAll('#interlocutors .choice').forEach(c=>c.classList.remove('selected'));
+  btn.classList.add('selected');
+  setTimeout(()=>goTo('step3'),200);
+}
+
+// ═══ STEP 3 — Mode ═══
+function selectMode(btn){
+  userMode = btn.dataset.mode;
+  document.querySelectorAll('#modes .choice').forEach(c=>c.classList.remove('selected'));
+  btn.classList.add('selected');
+  setTimeout(()=>goTo('step4'),200);
+}
+
+// ═══ STEP 4 — Input ═══
+function updateChar(){
+  const v = document.getElementById('msg-input').value;
+  document.getElementById('char-count').textContent = v.length+' / 2000';
+  document.getElementById('cta-transform').disabled = v.trim().length < 5;
+}
+function clearMsg(){
+  document.getElementById('msg-input').value='';
+  updateChar();
+  stopMic();
+}
+function showError(msg){document.getElementById('error-msg').textContent=msg;document.getElementById('error-box').classList.add('show');}
+function hideError(){document.getElementById('error-box').classList.remove('show');}
+
+// ═══ MICRO ═══
+function toggleMic(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){alert('La dictée vocale nécessite Chrome ou Edge.');return;}
+  if(micActive){stopMic();}
+  else{startMic(SR);}
+}
+function startMic(SR){
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true})
+      .then(stream=>{stream.getTracks().forEach(t=>t.stop());actuallyStartMic(SR);})
+      .catch(()=>alert('Autorisez l\'accès au microphone.'));
+  } else { actuallyStartMic(SR); }
+}
+function actuallyStartMic(SR){
+  try{
+    micRecognition = new SR();
+    micRecognition.lang = 'fr-FR';
+    micRecognition.continuous = true;
+    micRecognition.interimResults = false;
+    micRecognition.maxAlternatives = 1;
+
+    micExistingText = document.getElementById('msg-input').value.trim();
+    if(micExistingText.length>0 && !micExistingText.endsWith(' ')) micExistingText+=' ';
+    micFinalBuffer = '';
+    micCompletedSentences = '';
+
+    let autoStopTimer = null;
+    const SILENCE_MS = 3000;
+    let hasSpoken = false;
+
+    function scheduleAutoStop(){
+      if(autoStopTimer) clearTimeout(autoStopTimer);
+      autoStopTimer = setTimeout(()=>{
+        if(micActive && hasSpoken){
+          if(micFinalBuffer.trim().length>0){micCompletedSentences += micFinalBuffer+'. '; micFinalBuffer='';}
+          stopMic();
+        }
+      }, SILENCE_MS);
+    }
+
+    micRecognition.onstart = ()=>{
+      micActive = true;
+      const b = document.getElementById('mic-btn');
+      if(b){b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg> Stop';b.classList.add('recording');}
+    };
+    micRecognition.onresult = (ev)=>{
+      hasSpoken = true;
+      const last = ev.results[ev.results.length-1];
+      if(last && last.isFinal){
+        let cleaned = last[0].transcript.trim();
+        if(cleaned.length>0){
+          const prefix = micExistingText + micCompletedSentences;
+          if(prefix.trim()===''){cleaned = cleaned.charAt(0).toUpperCase()+cleaned.slice(1);}
+          else{const lc = prefix.trim().slice(-1);if(['.','!','?'].includes(lc)) cleaned = cleaned.charAt(0).toUpperCase()+cleaned.slice(1);}
+          micFinalBuffer = cleaned;
+          const fullText = (micExistingText+micCompletedSentences+micFinalBuffer).replace(/\s+/g,' ').trim();
+          document.getElementById('msg-input').value = fullText;
+          updateChar();
+        }
+        scheduleAutoStop();
+      }
+    };
+    micRecognition.onerror = (e)=>{
+      if(e.error==='no-speech') return;
+      if(e.error==='not-allowed'){if(autoStopTimer) clearTimeout(autoStopTimer); alert('Micro non autorisé.'); stopMic();}
+    };
+    micRecognition.onend = ()=>{
+      if(!micActive){
+        if(autoStopTimer) clearTimeout(autoStopTimer);
+        const b=document.getElementById('mic-btn');
+        if(b){b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg> Dicter';b.classList.remove('recording');}
+        return;
+      }
+      try{setTimeout(()=>{if(micActive){try{micRecognition.start();}catch(err){stopMic();}}},200);}
+      catch(err){stopMic();}
+    };
+    micRecognition.start();
+  }catch(err){alert('Erreur micro.');}
+}
+function stopMic(){
+  micActive=false;
+  if(micRecognition){try{micRecognition.stop();}catch(e){} micRecognition=null;}
+  micFinalBuffer=''; micExistingText=''; micCompletedSentences='';
+  const b=document.getElementById('mic-btn');
+  if(b){b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg> Dicter';b.classList.remove('recording');}
+}
+
+// ═══ LOADING ANIMATION ═══
+const phases=['phase-1','phase-2','phase-3','phase-4'];
+let phaseIdx=0, phaseTimer=null;
+function startLoadingAnim(){
+  phases.forEach(p=>{const el=document.getElementById(p);el.classList.remove('show');el.style.display='none';});
+  phaseIdx=0;
+  showNextPhase();
+}
+function showNextPhase(){
+  if(phaseIdx>0){
+    const prev=document.getElementById(phases[phaseIdx-1]);
+    prev.classList.remove('show');
+    setTimeout(()=>prev.style.display='none',400);
+  }
+  if(phaseIdx<phases.length){
+    const el=document.getElementById(phases[phaseIdx]);
+    el.style.display='block';
+    setTimeout(()=>el.classList.add('show'),50);
+    phaseIdx++;
+    phaseTimer=setTimeout(showNextPhase,1300);
+  }
+}
+
+// ═══ TRANSFORM ═══
+async function transformMessage(){
+  const msg = document.getElementById('msg-input').value.trim();
+  if(!msg || msg.length<5) return;
+  userMessage = msg;
+  stopMic(); hideError();
+  goTo('loading'); startLoadingAnim();
+
+  // Si Expression libre → vérifier urgence d'abord
+  if(userMode==='express'){
+    try{
+      const urgRes = await fetch('/api/urgency',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+      if(urgRes.ok){
+        const ud = await urgRes.json();
+        if(ud.urgency && ud.urgency!=='aucune'){
+          clearTimeout(phaseTimer);
+          showUrgencyScreen(ud.urgency);
+          return;
+        }
+      }
+    }catch(e){/* continue */}
+  }
+
+  // Appel API
+  const endpoint = userMode==='cnv' ? '/api/cnv' : '/api/express';
+  try{
+    const r = await fetch(endpoint,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:msg, objective:userObjective, interlocutor:userInterlocutor})
+    });
+    if(!r.ok) throw new Error('Erreur '+r.status);
+    const result = await r.json();
+    if(result.error) throw new Error(result.error);
+    clearTimeout(phaseTimer);
+    resultData = result;
+    currentVariant = 'doux';
+    displayResult();
+  }catch(err){
+    clearTimeout(phaseTimer);
+    showError("Une erreur s'est produite. Réessayez.");
+    goTo('step4');
+  }
+}
+
+// ═══ DISPLAY RESULT ═══
+function displayResult(){
+  if(!resultData) return;
+  const v = resultData[currentVariant];
+  if(!v) return;
+
+  document.getElementById('original-display').textContent = userMessage;
+  document.getElementById('result-kicker-text').textContent =
+    userMode==='cnv' ? 'Message en Communication Non-Violente' : 'Message reformulé';
+
+  if(userMode==='cnv'){
+    document.getElementById('cnv-steps').style.display='flex';
+    document.getElementById('improvements-block').style.display='none';
+    document.getElementById('step-obs').textContent = v.observation||'—';
+    document.getElementById('step-sent').textContent = v.sentiment||'—';
+    document.getElementById('step-need').textContent = v.besoin||'—';
+    document.getElementById('step-req').textContent = v.demande||'—';
+    document.getElementById('full-message-text').textContent = v.message_complet||'—';
+  } else {
+    document.getElementById('cnv-steps').style.display='none';
+    document.getElementById('improvements-block').style.display='block';
+    const impEl = document.getElementById('improvements');
+    if(v.ameliorations && Array.isArray(v.ameliorations)){
+      impEl.innerHTML = v.ameliorations.map(a=>`<div class="improvement-item">${a}</div>`).join('');
+    } else { impEl.innerHTML=''; }
+    document.getElementById('full-message-text').textContent = v.message_reformule||'—';
+  }
+
+  document.getElementById('tip-text').textContent = v.tip || '';
+
+  // Active tab
+  document.querySelectorAll('.vt').forEach(t=>{
+    t.classList.toggle('active', t.dataset.v===currentVariant);
+  });
+
+  goTo('result');
+}
+
+function switchVariant(variant, btn){
+  if(!resultData || !resultData[variant]) return;
+  currentVariant = variant;
+  document.querySelectorAll('.vt').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  displayResult();
+}
+
+// ═══ COPY ═══
+function copyMessage(){
+  if(!resultData) return;
+  const v = resultData[currentVariant];
+  const text = userMode==='cnv' ? v.message_complet : v.message_reformule;
+  navigator.clipboard.writeText(text||'').then(()=>{
+    const b = document.getElementById('btn-copy');
+    const orig = b.innerHTML;
+    b.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copié !';
+    setTimeout(()=>{ b.innerHTML = orig; }, 2000);
+  });
+}
+
+// ═══ SEND ═══
+function getCurrentText(){
+  if(!resultData) return '';
+  const v = resultData[currentVariant];
+  return userMode==='cnv' ? (v.message_complet||'') : (v.message_reformule||'');
+}
+function sendVia(channel){
+  const text = getCurrentText();
+  if(!text) return;
+  const enc = encodeURIComponent(text);
+  if(channel==='sms'){
+    window.location.href = 'sms:?body='+enc;
+  } else if(channel==='whatsapp'){
+    window.location.href = 'https://wa.me/?text='+enc;
+  } else if(channel==='email'){
+    window.location.href = 'mailto:?body='+enc;
+  } else if(channel==='native'){
+    if(navigator.share){
+      navigator.share({text:text}).catch(e=>{});
+    } else {
+      // Fallback : copy
+      navigator.clipboard.writeText(text);
+      alert('Message copié ! Vous pouvez le coller dans n\'importe quelle application.');
+    }
+  }
+}
+
+// ═══ URGENCY ═══
+function showUrgencyScreen(type){
+  const data = urgencyData[type];
+  if(!data){goTo('home'); return;}
+  document.getElementById('urg-title').textContent = data.title;
+  document.getElementById('urg-sub').textContent = data.sub;
+  document.getElementById('urg-numbers').innerHTML = data.numbers.map(n=>`
+    <a class="urg-number" href="tel:${n.call}">
+      <div class="urg-num-icon">📞</div>
+      <div class="urg-num-info">
+        <div class="urg-num-name">${n.name}</div>
+        <div class="urg-num-desc">${n.desc}</div>
+      </div>
+      <div class="urg-num-call">${n.call}</div>
+    </a>`).join('');
+  goTo('urgency');
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded',()=>{
+  updateChar();
+});
+</script>
+</body>
+</html>
